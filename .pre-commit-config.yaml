@@ -1,0 +1,43 @@
+# Tools are configured in pyproject.toml when possible, except
+# for arguments specific to the pre-commit flow.
+
+repos:
+-   repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.5.0
+    hooks:
+    -   id: check-ast
+    -   id: check-toml
+    -   id: check-yaml
+    -   id: check-added-large-files
+    -   id: check-builtin-literals
+    -   id: end-of-file-fixer
+    -   id: trailing-whitespace
+-   repo: https://github.com/PyCQA/bandit
+    rev: '1.7.5'
+    hooks:
+    - id: bandit
+      args: [-c, python/pyproject.toml]
+-   repo: https://github.com/pre-commit/mirrors-mypy
+    rev: 'v1.6.1'
+    hooks:
+    -   id: mypy
+        additional_dependencies:
+            - fastapi
+            - pytest
+-   repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.1.4
+    hooks:
+    -   id: ruff
+        args: [--fix, --exit-non-zero-on-fix]
+-   repo: https://github.com/psf/black
+    rev: 23.11.0
+    hooks:
+    -   id: black
+-   repo: local
+    hooks:
+      - id: pytest-check
+        name: pytest-check
+        entry: pytest python/openml_croissant/_src/tests
+        language: system
+        pass_filenames: false
+        always_run: true

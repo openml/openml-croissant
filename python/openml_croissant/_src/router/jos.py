@@ -1,0 +1,2 @@
+def jos():
+    return "jos"
