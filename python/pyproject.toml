@@ -12,8 +12,10 @@ classifiers = [
     "Operating System :: OS Independent",
 ]
 dependencies = [
-    "fastapi",
-    "uvicorn",
+    "fastapi==0.104.1",
+    "mlcroissant==0.0.2",
+    "openml==0.14.1",
+    "uvicorn==0.24.0.post1",
 ]
 
 [project.optional-dependencies]
