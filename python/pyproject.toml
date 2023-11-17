@@ -13,7 +13,7 @@ classifiers = [
 ]
 dependencies = [
     "fastapi==0.104.1",
-    "mlcroissant==0.0.2",
+#    "mlcroissant==0.0.2",  TODO: import mlcroissant when the pypi is up-to-date again
     "openml==0.14.1",
     "uvicorn==0.24.0.post1",
 ]
