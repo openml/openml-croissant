@@ -1,5 +1,5 @@
 """
-Defines Rest API endpoints.
+Defines web API endpoints.
 """
 import openml
 from fastapi import FastAPI

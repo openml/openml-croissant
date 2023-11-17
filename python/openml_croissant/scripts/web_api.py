@@ -4,11 +4,11 @@ import argparse
 
 import uvicorn
 
-from openml_croissant._src import rest
+from openml_croissant._src import web_api
 
 
 def _parse_args() -> argparse.Namespace:
-    parser = argparse.ArgumentParser(description="Run the REST API. Please refer to the README.")
+    parser = argparse.ArgumentParser(description="Run the web API. Please refer to the README.")
     parser.add_argument("--url-prefix", default="", help="Prefix for the api url.")
     parser.add_argument(
         "--reload",
@@ -22,7 +22,7 @@ def _parse_args() -> argparse.Namespace:
 
 def main():
     args = _parse_args()
-    app = rest.fastapi_app(url_prefix=args.url_prefix)
+    app = web_api.fastapi_app(url_prefix=args.url_prefix)
     uvicorn.run(app, host=args.host, port=args.port, reload=args.reload)
 
 
