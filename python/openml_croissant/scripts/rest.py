@@ -16,7 +16,7 @@ def _parse_args() -> argparse.Namespace:
         help="Use `--reload` for FastAPI.",
     )
     parser.add_argument("--host", default="localhost", help="Bind the socket to this host.")
-    parser.add_argument("--post", type=int, default=8000, help="Bind the socket to this port.")
+    parser.add_argument("--port", type=int, default=8000, help="Bind the socket to this port.")
     return parser.parse_args()
 
 
