@@ -1,0 +1,145 @@
+{
+    "@context": {
+        "@language": "en",
+        "@vocab": "https://schema.org/",
+        "column": "ml:column",
+        "data": {
+            "@id": "ml:data",
+            "@type": "@json"
+        },
+        "dataType": {
+            "@id": "ml:dataType",
+            "@type": "@vocab"
+        },
+        "extract": "ml:extract",
+        "field": "ml:field",
+        "fileProperty": "ml:fileProperty",
+        "format": "ml:format",
+        "includes": "ml:includes",
+        "isEnumeration": "ml:isEnumeration",
+        "jsonPath": "ml:jsonPath",
+        "ml": "http://mlcommons.org/schema/",
+        "parentField": "ml:parentField",
+        "path": "ml:path",
+        "recordSet": "ml:recordSet",
+        "references": "ml:references",
+        "regex": "ml:regex",
+        "repeated": "ml:repeated",
+        "replace": "ml:replace",
+        "sc": "https://schema.org/",
+        "separator": "ml:separator",
+        "source": "ml:source",
+        "subField": "ml:subField",
+        "transform": "ml:transform"
+    },
+    "@type": "sc:Dataset",
+    "name": "test_name",
+    "description": "Test Description",
+    "citation": "Institute of Ontology",
+    "license": "Public",
+    "url": "https://www.openml.org/search?type=data&id=42",
+    "distribution": [
+        {
+            "@type": "sc:FileObject",
+            "name": "data-file",
+            "description": "Data file belonging to the dataset.",
+            "contentUrl": "https://example.com/data-file.arff",
+            "encodingFormat": "text/plain",
+            "md5": "c45bb74cf7ac53ab2b9e61d105dbd454"
+        }
+    ],
+    "recordSet": [
+        {
+            "@type": "ml:RecordSet",
+            "name": "data-file-description",
+            "field": [
+                {
+                    "@type": "ml:Field",
+                    "name": "date",
+                    "description": "date - a field.",
+                    "dataType": "sc:Text",
+                    "isEnumeration": true,
+                    "source": {
+                        "distribution": "data-file",
+                        "extract": {
+                            "column": "date"
+                        }
+                    }
+                },
+                {
+                    "@type": "ml:Field",
+                    "name": "lodging",
+                    "description": "lodging - a field.",
+                    "dataType": "sc:Text",
+                    "isEnumeration": true,
+                    "source": {
+                        "distribution": "data-file",
+                        "extract": {
+                            "column": "lodging"
+                        }
+                    }
+                },
+                {
+                    "@type": "ml:Field",
+                    "name": "carbon",
+                    "description": "carbon - a field.",
+                    "dataType": [
+                        "sc:Float",
+                        "sc:Integer"
+                    ],
+                    "source": {
+                        "distribution": "data-file",
+                        "extract": {
+                            "column": "carbon"
+                        }
+                    }
+                },
+                {
+                    "@type": "ml:Field",
+                    "name": "ignore_this",
+                    "description": "ignore this - a field.",
+                    "dataType": [
+                        "sc:Float",
+                        "sc:Integer"
+                    ],
+                    "source": {
+                        "distribution": "data-file",
+                        "extract": {
+                            "column": "ignore this"
+                        }
+                    }
+                },
+                {
+                    "@type": "ml:Field",
+                    "name": "identifier",
+                    "description": "identifier - the field that uniquely identifies each record, this field should be ignored.",
+                    "dataType": [
+                        "sc:Float",
+                        "sc:Integer"
+                    ],
+                    "source": {
+                        "distribution": "data-file",
+                        "extract": {
+                            "column": "identifier"
+                        }
+                    }
+                },
+                {
+                    "@type": "ml:Field",
+                    "name": "target",
+                    "description": "target - the default target field.",
+                    "dataType": [
+                        "sc:Float",
+                        "sc:Integer"
+                    ],
+                    "source": {
+                        "distribution": "data-file",
+                        "extract": {
+                            "column": "target"
+                        }
+                    }
+                }
+            ]
+        }
+    ]
+}
