@@ -1,4 +1,5 @@
 import re
+from typing import Iterator
 
 import mlcroissant as mlc
 from openml import OpenMLDataFeature, OpenMLDataset
@@ -35,12 +36,11 @@ def convert(dataset: OpenMLDataset) -> mlc.Metadata:
         ),
     ]
 
-    record_sets = [
-        mlc.RecordSet(
-            name="data-file-description",
-            fields=[_field(dataset, feature) for feature in dataset.features.values()],
-        ),
-    ]
+    data_file_recordset = mlc.RecordSet(
+        name="data-file-description",
+        fields=[_field(dataset, feature) for feature in dataset.features.values()],
+    )
+    record_sets = list(_enum_recordsets(dataset)) + [data_file_recordset]
 
     return mlc.Metadata(
         name=dataset.name,
@@ -65,6 +65,25 @@ def _sanitize_name_string(name: str) -> str:
     return re.sub("[^A-Za-z0-9]", "_", name).lower()
 
 
+def _enum_recordsets(dataset: OpenMLDataset) -> Iterator[mlc.RecordSet]:
+    """Create a recordset for each feature that has nominal_values (an enumeration)"""
+    for feature in dataset.features.values():
+        if feature.nominal_values:
+            name = _sanitize_name_string(feature.name)
+            yield mlc.RecordSet(
+                name=name,
+                description=f"Possible values for {name}",
+                fields=[
+                    mlc.Field(
+                        name="value",
+                        description=f"The value of {name}.",
+                        data_types=[mlc.DataType.TEXT],
+                    ),
+                ],
+                data=[{"value": value} for value in feature.nominal_values],
+            )
+
+
 def _field(dataset: OpenMLDataset, feature: OpenMLDataFeature) -> mlc.Field:
     """
     A croissant field description for this OpenML feature.
@@ -80,21 +99,22 @@ def _field(dataset: OpenMLDataset, feature: OpenMLDataFeature) -> mlc.Field:
     Raises:
         ValueError: Unknown datatype: [openml_datatype].
     """
-    datatypes = _convert_datatype(feature)
-    is_enumeration = feature.nominal_values and datatypes != mlc.DataType.BOOL
-    description = _field_description(dataset, feature)
-
-    return mlc.Field(
-        name=_sanitize_name_string(feature.name),
-        description=description,
-        data_types=datatypes,
-        is_enumeration=is_enumeration,
-        source=mlc.Source(
+    name = _sanitize_name_string(feature.name)
+    is_enumeration = feature.nominal_values is not None and len(feature.nominal_values) > 0
+    kwargs = {
+        "name": name,
+        "description": _field_description(dataset, feature),
+        "data_types": _convert_datatype(feature),
+        "is_enumeration": is_enumeration,
+        "source": mlc.Source(
             uid=DATA_FILE_UID,
             node_type="distribution",
             extract=mlc.Extract(column=feature.name),
         ),
-    )
+    }
+    if is_enumeration:
+        kwargs["references"] = mlc.Source(uid=f"{name}/value", node_type="field")
+    return mlc.Field(**kwargs)
 
 
 def _field_description(dataset: OpenMLDataset, feature: OpenMLDataFeature) -> str:
@@ -144,7 +164,7 @@ def _convert_datatype(feature: OpenMLDataFeature) -> mlc.DataType | list[mlc.Dat
     d_type = {
         "numeric": [mlc.DataType.FLOAT, mlc.DataType.INTEGER],
         "string": mlc.DataType.TEXT,
-        "nominal": mlc.DataType.TEXT,  # TODO: where to add the possible values?
+        "nominal": mlc.DataType.TEXT,
     }.get(feature.data_type, None)
     if d_type is None:
         msg = f"Unknown datatype: {feature.data_type}."

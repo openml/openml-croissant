@@ -51,6 +51,63 @@
     "recordSet": [
         {
             "@type": "ml:RecordSet",
+            "name": "date",
+            "description": "Possible values for date",
+            "field": [
+                {
+                    "@type": "ml:Field",
+                    "name": "value",
+                    "description": "The value of date.",
+                    "dataType": "sc:Text"
+                }
+            ],
+            "data": [
+                {
+                    "value": "april"
+                },
+                {
+                    "value": "august"
+                },
+                {
+                    "value": "july"
+                },
+                {
+                    "value": "june"
+                },
+                {
+                    "value": "may"
+                },
+                {
+                    "value": "october"
+                },
+                {
+                    "value": "september"
+                }
+            ]
+        },
+        {
+            "@type": "ml:RecordSet",
+            "name": "lodging",
+            "description": "Possible values for lodging",
+            "field": [
+                {
+                    "@type": "ml:Field",
+                    "name": "value",
+                    "description": "The value of lodging.",
+                    "dataType": "sc:Text"
+                }
+            ],
+            "data": [
+                {
+                    "value": "no"
+                },
+                {
+                    "value": "yes"
+                }
+            ]
+        },
+        {
+            "@type": "ml:RecordSet",
             "name": "data-file-description",
             "field": [
                 {
@@ -59,6 +116,9 @@
                     "description": "date - a field.",
                     "dataType": "sc:Text",
                     "isEnumeration": true,
+                    "references": {
+                        "field": "date/value"
+                    },
                     "source": {
                         "distribution": "data-file",
                         "extract": {
@@ -72,6 +132,9 @@
                     "description": "lodging - a field.",
                     "dataType": "sc:Text",
                     "isEnumeration": true,
+                    "references": {
+                        "field": "lodging/value"
+                    },
                     "source": {
                         "distribution": "data-file",
                         "extract": {
