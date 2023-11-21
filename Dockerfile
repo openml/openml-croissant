@@ -1,4 +1,4 @@
-FROM python:3.12-bookworm
+FROM python:3.11-bookworm
 
 RUN apt update && apt upgrade -y
 RUN python -m pip install --upgrade pip

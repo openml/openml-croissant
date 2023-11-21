@@ -1,14 +1,23 @@
+"""Converting OpenML Dataset into a Croissant representation.
+
+Typical usage:
+    metadata_openml = openml.datasets.get_dataset(identifier)
+    croissant = converter.convert(metadata_openml)
+"""
+
 import re
-from typing import Iterator
+from typing import Any, Iterator
 
 import mlcroissant as mlc
 from openml import OpenMLDataFeature, OpenMLDataset
 
-BOOLEAN_STRING_VALUES = ({"TRUE", "FALSE"}, {"1", "0"})
+from openml_croissant._src import conversion_outside_mlcroissant
+
+BOOLEAN_STRING_VALUES = ({"TRUE", "FALSE"}, {"1", "0"}, {"True", "False"}, {"true", "false"})
 DATA_FILE_UID = "data-file"
 
 
-def convert(dataset: OpenMLDataset) -> mlc.Metadata:
+def convert(dataset: OpenMLDataset) -> dict[str, Any]:
     """
     Convert an openml dataset into a DCF (Croissant) representation.
 
@@ -16,13 +25,13 @@ def convert(dataset: OpenMLDataset) -> mlc.Metadata:
         dataset: The OpenML dataset metadata
 
     Returns
-        a (validated) croissant Metadata object.
+        a (validated) croissant json
 
     Raises:
         ValueError: Unknown datatype: [openml_datatype].
         ValueError: Weird datafile format
     """
-    if not dataset.data_file or not dataset.data_file.endswith("arff"):
+    if not dataset.url or not dataset.url.endswith("arff"):
         msg = "Weird datafile format"
         raise ValueError(msg)
 
@@ -30,7 +39,7 @@ def convert(dataset: OpenMLDataset) -> mlc.Metadata:
         mlc.FileObject(
             name=DATA_FILE_UID,
             description="Data file belonging to the dataset.",
-            content_url=dataset.data_file,
+            content_url=dataset.url,
             encoding_format="text/plain",  # No official arff mimetype exist
             md5=dataset.md5_checksum,
         ),
@@ -42,15 +51,18 @@ def convert(dataset: OpenMLDataset) -> mlc.Metadata:
     )
     record_sets = list(_enum_recordsets(dataset)) + [data_file_recordset]
 
-    return mlc.Metadata(
+    metadata = mlc.Metadata(
         name=dataset.name,
         description=dataset.description,
         url=f"https://www.openml.org/search?type=data&id={dataset.dataset_id}",
-        citation=dataset.citation,
+        citation=dataset.citation if dataset.citation else dataset.paper_url,
         license=dataset.licence,
         distribution=distributions,
         record_sets=record_sets,
     )
+    croissant_json = metadata.to_json()
+    croissant_json.update(conversion_outside_mlcroissant.metadata(dataset))
+    return conversion_outside_mlcroissant.sorted_croissant(croissant_json)
 
 
 def _sanitize_name_string(name: str) -> str:
@@ -68,7 +80,7 @@ def _sanitize_name_string(name: str) -> str:
 def _enum_recordsets(dataset: OpenMLDataset) -> Iterator[mlc.RecordSet]:
     """Create a recordset for each feature that has nominal_values (an enumeration)"""
     for feature in dataset.features.values():
-        if feature.nominal_values:
+        if feature.nominal_values and not _is_boolean(feature):
             name = _sanitize_name_string(feature.name)
             yield mlc.RecordSet(
                 name=name,
@@ -100,11 +112,17 @@ def _field(dataset: OpenMLDataset, feature: OpenMLDataFeature) -> mlc.Field:
         ValueError: Unknown datatype: [openml_datatype].
     """
     name = _sanitize_name_string(feature.name)
-    is_enumeration = feature.nominal_values is not None and len(feature.nominal_values) > 0
+    datatype = _convert_datatype(feature)
+    is_enumeration = (
+        feature.nominal_values is not None
+        and len(feature.nominal_values) > 0
+        and datatype != mlc.DataType.BOOL
+    )
+
     kwargs = {
         "name": name,
         "description": _field_description(dataset, feature),
-        "data_types": _convert_datatype(feature),
+        "data_types": datatype,
         "is_enumeration": is_enumeration,
         "source": mlc.Source(
             uid=DATA_FILE_UID,
@@ -156,9 +174,7 @@ def _convert_datatype(feature: OpenMLDataFeature) -> mlc.DataType | list[mlc.Dat
     Raises:
         ValueError: Unknown datatype: [openml_datatype].
     """
-    if feature.nominal_values and any(
-        set(feature.nominal_values).issubset(booleans) for booleans in BOOLEAN_STRING_VALUES
-    ):
+    if _is_boolean(feature):
         return mlc.DataType.BOOL
 
     d_type = {
@@ -170,3 +186,10 @@ def _convert_datatype(feature: OpenMLDataFeature) -> mlc.DataType | list[mlc.Dat
         msg = f"Unknown datatype: {feature.data_type}."
         raise ValueError(msg)
     return d_type
+
+
+def _is_boolean(feature) -> bool:
+    """Return true if this feature is boolean"""
+    return feature.nominal_values and any(
+        set(feature.nominal_values).issubset(booleans) for booleans in BOOLEAN_STRING_VALUES
+    )

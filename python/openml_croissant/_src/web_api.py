@@ -4,7 +4,7 @@ Defines web API endpoints.
 import openml
 from fastapi import FastAPI
 
-from openml_croissant._src import converter
+from openml_croissant._src import conversion
 
 
 def fastapi_app(url_prefix: str) -> FastAPI:
@@ -20,7 +20,6 @@ def fastapi_app(url_prefix: str) -> FastAPI:
     @app.get(url_prefix + "/croissant/{identifier}")
     def convert(identifier: int) -> dict:
         metadata_openml = openml.datasets.get_dataset(identifier)
-        croissant = converter.convert(metadata_openml)
-        return croissant.to_json()
+        return conversion.convert(metadata_openml)
 
     return app

@@ -6,7 +6,7 @@ authors = [
 ]
 description = "The Python-based web API for OpenML Croissant."
 readme = "README.md"
-requires-python = ">=3.12"
+requires-python = ">3.11"
 classifiers = [
     "Programming Language :: Python :: 3",
     "Operating System :: OS Independent",
@@ -14,7 +14,10 @@ classifiers = [
 dependencies = [
     "fastapi==0.104.1",
 #    "mlcroissant==0.0.2",  TODO: import mlcroissant when the pypi is up-to-date again
+    "langcodes==3.3.0",
+    "language_data==1.1",
     "openml==0.14.1",
+    "python-dateutil==2.8.2",
     "uvicorn==0.24.0.post1",
 ]
 

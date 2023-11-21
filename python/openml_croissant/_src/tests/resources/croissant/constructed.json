@@ -33,11 +33,42 @@
         "transform": "ml:transform"
     },
     "@type": "sc:Dataset",
-    "name": "test_name",
-    "description": "Test Description",
     "citation": "Institute of Ontology",
+    "contributor": {
+        "@type": "sc:Person",
+        "name": "Another Test Person"
+    },
+    "creator": [
+        {
+            "@type": "sc:Person",
+            "name": "Test Person"
+        },
+        {
+            "@type": "sc:Person",
+            "name": "Another Person"
+        },
+        {
+            "@type": "sc:Person",
+            "name": "And A Third"
+        }
+    ],
+    "dateCreated": "2021-01-01T00:01:02",
+    "datePublished": "2020-01-01T00:01:02",
+    "description": "Test Description",
+    "inLanguage": "en",
+    "isAccessibleForFree": true,
+    "keywords": [
+        "study_1",
+        "study_41",
+        "study_7",
+        "study_88",
+        "uci"
+    ],
     "license": "Public",
+    "name": "test_name",
+    "sameAs": "https://example.com/original-url",
     "url": "https://www.openml.org/search?type=data&id=42",
+    "version": 7,
     "distribution": [
         {
             "@type": "sc:FileObject",
