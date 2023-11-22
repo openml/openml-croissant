@@ -168,12 +168,10 @@ def _field_description(dataset: OpenMLDataset, feature: OpenMLDataFeature) -> st
     if dataset.default_target_attribute and feature.name in dataset.default_target_attribute.split(
         ",",
     ):
-        # TODO: should Field.default_target be part of croissant?
         field_type = "the default target field"
     elif dataset.row_id_attribute and feature.name in dataset.row_id_attribute:
         field_type = "the field that uniquely identifies each record, this field should be ignored"
     elif dataset.ignore_attribute and feature.name in dataset.ignore_attribute:
-        # TODO: should Field.ignored be part of croissant?
         field_type = "this field should be ignored"
     else:
         field_type = "a field"
