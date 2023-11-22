@@ -34,6 +34,20 @@ def _parse_args() -> argparse.Namespace:
         help="Remove all existing results beforehand. If omitted, the results will be "
         "overwritten.",
     )
+    parser.add_argument(
+        "--max_categories_per_enumeration",
+        type=int,
+        help="if a categorical variable has more categories than this, the categories will not be "
+        "described in a Croissant RecordSet.",
+        default=openml_croissant.Settings().max_categories_per_enumeration,
+    )
+    parser.add_argument(
+        "--max_features",
+        type=int,
+        help="if an OpenML Dataset has more features than this, the features will not be "
+        "described in the Croissant.",
+        default=openml_croissant.Settings().max_features,
+    )
     return parser.parse_args()
 
 
@@ -49,6 +63,10 @@ def main():
         shutil.rmtree(path_output_dir)
     path_output_dir.mkdir(parents=True, exist_ok=True)
     identifiers = args.id if args.id else _all_dataset_identifiers()
+    settings = openml_croissant.Settings(
+        max_categories_per_enumeration=args.max_categories_per_enumeration,
+        max_features=args.max_features,
+    )
     path_exception_file = path_output_dir / "exceptions.csv"
     path_croissants = path_output_dir / "croissant"
     path_croissants.mkdir(exist_ok=True)
@@ -63,7 +81,7 @@ def main():
                 download_qualities=False,
                 download_features_meta_data=True,
             )
-            metadata_croissant = openml_croissant.convert(metadata_openml)
+            metadata_croissant = openml_croissant.convert(metadata_openml, settings)
             with (path_croissants / f"{identifier}.json").open("w") as f:
                 json.dump(
                     metadata_croissant,

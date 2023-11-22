@@ -17,17 +17,19 @@ import mlcroissant as mlc
 from openml import OpenMLDataFeature, OpenMLDataset
 
 from openml_croissant._src import conversion_outside_mlcroissant
+from openml_croissant._src.settings import Settings
 
 BOOLEAN_STRING_VALUES = ({"TRUE", "FALSE"}, {"1", "0"}, {"True", "False"}, {"true", "false"})
 DATA_FILE_UID = "data-file"
 
 
-def convert(dataset: OpenMLDataset) -> dict[str, Any]:
+def convert(dataset: OpenMLDataset, settings: Settings) -> dict[str, Any]:
     """
     Convert an openml dataset into a DCF (Croissant) representation.
 
     Args:
         dataset: The OpenML dataset metadata
+        settings: The conversion configuration
 
     Returns
         a (validated) croissant json
@@ -51,11 +53,18 @@ def convert(dataset: OpenMLDataset) -> dict[str, Any]:
         ),
     ]
 
+    if len(dataset.features) <= settings.max_features:
+        fields = [_field(dataset, feature, settings) for feature in dataset.features.values()]
+        enum_record_sets = list(_enum_recordsets(dataset, settings))
+    else:
+        fields = []
+        enum_record_sets = []
+
     data_file_recordset = mlc.RecordSet(
         name="data-file-description",
-        fields=[_field(dataset, feature) for feature in dataset.features.values()],
+        fields=fields,
     )
-    record_sets = list(_enum_recordsets(dataset)) + [data_file_recordset]
+    record_sets = enum_record_sets + [data_file_recordset]
 
     metadata = mlc.Metadata(
         name=_sanitize_name_string(dataset.name),
@@ -83,10 +92,14 @@ def _sanitize_name_string(name: str) -> str:
     return re.sub("[^a-zA-Z0-9\\-_.]", "_", name)
 
 
-def _enum_recordsets(dataset: OpenMLDataset) -> Iterator[mlc.RecordSet]:
+def _enum_recordsets(dataset: OpenMLDataset, settings: Settings) -> Iterator[mlc.RecordSet]:
     """Create a recordset for each feature that has nominal_values (an enumeration)"""
     for feature in dataset.features.values():
-        if feature.nominal_values and not _is_boolean(feature):
+        if (
+            feature.nominal_values
+            and not _is_boolean(feature)
+            and len(feature.nominal_values) <= settings.max_categories_per_enumeration
+        ):
             name = _sanitize_name_string(feature.name)
             yield mlc.RecordSet(
                 name=f"enumeration_{name}",  # prefix to avoid duplicate with dataset name
@@ -102,7 +115,7 @@ def _enum_recordsets(dataset: OpenMLDataset) -> Iterator[mlc.RecordSet]:
             )
 
 
-def _field(dataset: OpenMLDataset, feature: OpenMLDataFeature) -> mlc.Field:
+def _field(dataset: OpenMLDataset, feature: OpenMLDataFeature, settings) -> mlc.Field:
     """
     A croissant field description for this OpenML feature.
 
@@ -136,7 +149,7 @@ def _field(dataset: OpenMLDataset, feature: OpenMLDataFeature) -> mlc.Field:
             extract=mlc.Extract(column=feature.name),
         ),
     }
-    if is_enumeration:
+    if is_enumeration and len(feature.nominal_values) <= settings.max_categories_per_enumeration:
         kwargs["references"] = mlc.Source(uid=f"enumeration_{name}/value", node_type="field")
     return mlc.Field(**kwargs)
 

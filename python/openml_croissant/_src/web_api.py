@@ -2,11 +2,11 @@
 Defines web API endpoints.
 """
 import openml
-from fastapi import FastAPI, HTTPException
+from fastapi import Depends, FastAPI, HTTPException
 from openml.exceptions import OpenMLServerException
 from starlette import status
 
-from openml_croissant._src import conversion
+import openml_croissant
 
 
 def fastapi_app(url_prefix: str) -> FastAPI:
@@ -20,7 +20,7 @@ def fastapi_app(url_prefix: str) -> FastAPI:
     )
 
     @app.get(url_prefix + "/croissant/{identifier}")
-    def convert(identifier: int) -> dict:
+    def convert(identifier: int, settings: openml_croissant.Settings = Depends()) -> dict:
         try:
             metadata_openml = openml.datasets.get_dataset(
                 identifier,
@@ -43,7 +43,7 @@ def fastapi_app(url_prefix: str) -> FastAPI:
             ) from e
 
         try:
-            return conversion.convert(metadata_openml)
+            return openml_croissant.convert(metadata_openml, settings)
         except Exception as e:
             raise HTTPException(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,

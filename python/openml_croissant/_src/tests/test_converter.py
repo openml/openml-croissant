@@ -2,8 +2,7 @@ import json
 
 import openml
 
-from openml_croissant._src import conversion
-from openml_croissant._src.serialization import deserialize_croissant
+import openml_croissant
 from openml_croissant._src.tests.testutils import paths
 
 
@@ -17,7 +16,7 @@ def test_minimal_conversion():
         url="https://example.com/dataset.arff",
         md5_checksum="checksum",
     )
-    croissant = conversion.convert(metadata_openml)
+    croissant = openml_croissant.convert(metadata_openml, openml_croissant.Settings())
     assert croissant["name"] == "anneal"
     assert croissant["description"] == "description"
     assert croissant["url"] == "https://www.openml.org/search?type=data&id=1"
@@ -62,11 +61,11 @@ def test_constructed():
         features_file=str(file_path_features),
     )
 
-    croissant_actual = conversion.convert(metadata_openml)
+    croissant_actual = openml_croissant.convert(metadata_openml, openml_croissant.Settings())
 
     expected_path = paths.path_test_resources() / "croissant" / "constructed.json"
     with expected_path.open("r") as f:
-        croissant_expected = json.load(f, object_hook=deserialize_croissant)
+        croissant_expected = json.load(f, object_hook=openml_croissant.deserialize_croissant)
 
-    # print(json.dumps(croissant_actual, indent=4, default=serialize_croissant))
+    # print(json.dumps(croissant_actual, indent=4, default=openml_croissant.serialize_croissant))
     assert croissant_actual == croissant_expected
