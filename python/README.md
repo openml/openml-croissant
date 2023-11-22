@@ -14,22 +14,6 @@ If you do not have a Python environment:
 ## Install
 ```bash
 python -m pip install ".[dev]"
-```
-
-Currently, you'll have to install the `mlcroissant` dependency manually, because PYPI is not
-up-to-date.
-
-```bash
-mkdir dependencies
-cd dependencies
-git clone https://github.com/mlcommons/croissant.git
-cd croissant/python/mlcroissant
-python -m pip install ".[dev]"
-```
-
-Then, go back to the root directory of this project, and:
-
-```bash
 pre-commit install
 ```
 
