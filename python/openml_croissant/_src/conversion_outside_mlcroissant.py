@@ -36,7 +36,7 @@ def metadata(dataset: OpenMLDataset) -> dict[str, Any]:
             "dateCreated": _ds(field="upload_date", transform=dateutil.parser.parse),
             "dateModified": _ds(field="processing_date", transform=dateutil.parser.parse),
             "datePublished": _ds(field="collection_date", transform=_lenient_date_parser),
-            "inLanguage": _ds(field="language", transform=lambda v: langcodes.find(v).language),
+            "inLanguage": _ds(field="language", transform=_language_code),
             "isAccessibleForFree": True,
             "license": _ds(field="licence"),
             "creativeWorkStatus": _ds(field="status"),
@@ -145,3 +145,25 @@ def sorted_croissant(croissant_json: dict[str, Any]) -> dict[str, Any]:
     for field_name in LARGE_FIELDS:
         sorted_croissant_json[field_name] = croissant_json[field_name]
     return sorted_croissant_json
+
+
+def _language_code(language: str) -> str | None:
+    """
+    Try to convert the language into a  IETF BCP 47 language code.
+
+    This can handle any string that dateutil.parser can parse, such as "2000-01-01T00:00:00",
+    but also only a year, such as "2000"
+
+    Args:
+        language: a language, for instance "Dutch"
+
+    Returns:
+        An IETF BCP 47 language tag, for instance "nl"
+    """
+    if language == "African":
+        language = "Afrikaans"
+    try:
+        return langcodes.find(language).language
+    except LookupError as e:
+        logging.warning(f"Could not parse language {language}: {str(e)}")
+        return None

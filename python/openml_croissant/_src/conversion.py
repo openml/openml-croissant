@@ -200,6 +200,7 @@ def _convert_datatype(feature: OpenMLDataFeature) -> mlc.DataType | list[mlc.Dat
         "numeric": [mlc.DataType.FLOAT, mlc.DataType.INTEGER],
         "string": mlc.DataType.TEXT,
         "nominal": mlc.DataType.TEXT,
+        "date": mlc.DataType.DATE,
     }.get(feature.data_type, None)
     if d_type is None:
         msg = f"Unknown datatype: {feature.data_type}."
