@@ -4,7 +4,7 @@ import argparse
 
 import uvicorn
 
-from openml_croissant._src import web_api
+import openml_croissant
 
 
 def _parse_args() -> argparse.Namespace:
@@ -22,7 +22,7 @@ def _parse_args() -> argparse.Namespace:
 
 def main():
     args = _parse_args()
-    app = web_api.fastapi_app(url_prefix=args.url_prefix)
+    app = openml_croissant.fastapi_app(url_prefix=args.url_prefix)
     uvicorn.run(app, host=args.host, port=args.port, reload=args.reload)
 
 

@@ -22,7 +22,12 @@ def fastapi_app(url_prefix: str) -> FastAPI:
     @app.get(url_prefix + "/croissant/{identifier}")
     def convert(identifier: int) -> dict:
         try:
-            metadata_openml = openml.datasets.get_dataset(identifier)
+            metadata_openml = openml.datasets.get_dataset(
+                identifier,
+                download_data=False,
+                download_qualities=False,
+                download_features_meta_data=True,
+            )
         except OpenMLServerException as e:
             if e.message and "Unknown dataset" in e.message:
                 msg = f"Dataset with identifier {identifier} not found in OpenML."

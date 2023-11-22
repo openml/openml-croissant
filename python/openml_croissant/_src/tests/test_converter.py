@@ -46,7 +46,7 @@ def test_constructed():
         upload_date="2021-01-01T00:01:02",
         language="English",
         licence="Public",
-        original_data_url="https://example.com/original-url",  # Unused
+        original_data_url="https://example.com/original-url",
         url="https://example.com/data-file.arff",
         data_file="https://example.com/data-file.arff",  # Unused (legacy?)
         default_target_attribute="target",

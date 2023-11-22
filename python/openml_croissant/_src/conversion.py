@@ -1,7 +1,12 @@
 """Converting OpenML Dataset into a Croissant representation.
 
 Typical usage:
-    metadata_openml = openml.datasets.get_dataset(identifier)
+    metadata_openml = openml.datasets.get_dataset(
+        identifier,
+        download_data=False,
+        download_qualities=False,
+        download_features_meta_data=True
+    )
     croissant = converter.convert(metadata_openml)
 """
 
@@ -53,7 +58,7 @@ def convert(dataset: OpenMLDataset) -> dict[str, Any]:
     record_sets = list(_enum_recordsets(dataset)) + [data_file_recordset]
 
     metadata = mlc.Metadata(
-        name=dataset.name,
+        name=_sanitize_name_string(dataset.name),
         description=dataset.description,
         url=f"https://www.openml.org/search?type=data&id={dataset.dataset_id}",
         citation=dataset.citation if dataset.citation else dataset.paper_url,
@@ -75,7 +80,7 @@ def _sanitize_name_string(name: str) -> str:
     Returns:
         a sanitized version of the name
     """
-    return re.sub("[^A-Za-z0-9]", "_", name).lower()
+    return re.sub("[^a-zA-Z0-9\\-_.]", "_", name)
 
 
 def _enum_recordsets(dataset: OpenMLDataset) -> Iterator[mlc.RecordSet]:
@@ -84,7 +89,7 @@ def _enum_recordsets(dataset: OpenMLDataset) -> Iterator[mlc.RecordSet]:
         if feature.nominal_values and not _is_boolean(feature):
             name = _sanitize_name_string(feature.name)
             yield mlc.RecordSet(
-                name=name,
+                name=f"enumeration_{name}",  # prefix to avoid duplicate with dataset name
                 description=f"Possible values for {name}",
                 fields=[
                     mlc.Field(
@@ -121,7 +126,7 @@ def _field(dataset: OpenMLDataset, feature: OpenMLDataFeature) -> mlc.Field:
     )
 
     kwargs = {
-        "name": name,
+        "name": f"feature_{feature.index}-{name}",  # the index assures the name is unique
         "description": _field_description(dataset, feature),
         "data_types": datatype,
         "is_enumeration": is_enumeration,
@@ -132,7 +137,7 @@ def _field(dataset: OpenMLDataset, feature: OpenMLDataFeature) -> mlc.Field:
         ),
     }
     if is_enumeration:
-        kwargs["references"] = mlc.Source(uid=f"{name}/value", node_type="field")
+        kwargs["references"] = mlc.Source(uid=f"enumeration_{name}/value", node_type="field")
     return mlc.Field(**kwargs)
 
 

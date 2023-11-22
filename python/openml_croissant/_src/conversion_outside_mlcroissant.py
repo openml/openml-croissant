@@ -8,6 +8,7 @@ into the converter.
 """
 
 import datetime
+import logging
 from collections import OrderedDict
 from functools import partial
 from typing import Any, Callable
@@ -29,7 +30,7 @@ def metadata(dataset: OpenMLDataset) -> dict[str, Any]:
             "version": dataset.version,
             "creator": _ds(
                 field="creator",
-                transform=lambda v: [_person(p) for p in v.split(", ")],
+                transform=lambda v: [_person(p) for p in _list_or_comma_separated_string(v)],
             ),
             "contributor": _ds(field="contributor", transform=_person),
             "dateCreated": _ds(field="upload_date", transform=dateutil.parser.parse),
@@ -69,6 +70,13 @@ def _get_field(obj: object, field: str, transform: Callable | None = None) -> An
     return val
 
 
+def _list_or_comma_separated_string(value: str | list[str]) -> list[str]:
+    """Convert to a list of strings"""
+    if isinstance(value, str):
+        return value.split(", ")
+    return value
+
+
 def _person(name: str) -> dict | None:
     """
     A dictionary with json-ld fields for a https://schema.org/Person
@@ -88,7 +96,7 @@ def _person(name: str) -> dict | None:
     return person
 
 
-def _lenient_date_parser(value: str) -> datetime.date | datetime.datetime:
+def _lenient_date_parser(value: str) -> datetime.date | datetime.datetime | None:
     """
     Try to parse the value as a date or datetime.
 
@@ -99,15 +107,17 @@ def _lenient_date_parser(value: str) -> datetime.date | datetime.datetime:
         value: a date-like string
 
     Returns:
-        A datetime if the date and time are specified, or a date if the time is not specified.
-
-    Raises:
-        dateutil.parser.ParserError: Unknown date/datetime format.
+        A datetime if the date and time are specified, a date if the time is not specified,
+        or None (with a logged warning) on any exception.
     """
     if len(value) == len("YYYY") and (value.startswith("19") or value.startswith("20")):
         year = int(value)
         return datetime.date(year, 1, 1)
-    return dateutil.parser.parse(value)
+    try:
+        return dateutil.parser.parse(value)
+    except dateutil.parser.ParserError as e:
+        logging.warning(f"Could not parse date {value}: {str(e)}")
+        return None
 
 
 def sorted_croissant(croissant_json: dict[str, Any]) -> dict[str, Any]:

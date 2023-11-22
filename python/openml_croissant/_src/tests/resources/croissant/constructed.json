@@ -82,7 +82,7 @@
     "recordSet": [
         {
             "@type": "ml:RecordSet",
-            "name": "date",
+            "name": "enumeration_date",
             "description": "Possible values for date",
             "field": [
                 {
@@ -118,7 +118,7 @@
         },
         {
             "@type": "ml:RecordSet",
-            "name": "lodging",
+            "name": "enumeration_lodging",
             "description": "Possible values for lodging",
             "field": [
                 {
@@ -143,12 +143,12 @@
             "field": [
                 {
                     "@type": "ml:Field",
-                    "name": "date",
+                    "name": "feature_0-date",
                     "description": "date - a field.",
                     "dataType": "sc:Text",
                     "isEnumeration": true,
                     "references": {
-                        "field": "date/value"
+                        "field": "enumeration_date/value"
                     },
                     "source": {
                         "distribution": "data-file",
@@ -159,12 +159,12 @@
                 },
                 {
                     "@type": "ml:Field",
-                    "name": "lodging",
+                    "name": "feature_1-lodging",
                     "description": "lodging - a field.",
                     "dataType": "sc:Text",
                     "isEnumeration": true,
                     "references": {
-                        "field": "lodging/value"
+                        "field": "enumeration_lodging/value"
                     },
                     "source": {
                         "distribution": "data-file",
@@ -175,7 +175,7 @@
                 },
                 {
                     "@type": "ml:Field",
-                    "name": "carbon",
+                    "name": "feature_2-carbon",
                     "description": "carbon - a field.",
                     "dataType": [
                         "sc:Float",
@@ -190,7 +190,7 @@
                 },
                 {
                     "@type": "ml:Field",
-                    "name": "ignore_this",
+                    "name": "feature_3-ignore_this",
                     "description": "ignore this - a field.",
                     "dataType": [
                         "sc:Float",
@@ -205,7 +205,7 @@
                 },
                 {
                     "@type": "ml:Field",
-                    "name": "identifier",
+                    "name": "feature_4-identifier",
                     "description": "identifier - the field that uniquely identifies each record, this field should be ignored.",
                     "dataType": [
                         "sc:Float",
@@ -220,7 +220,7 @@
                 },
                 {
                     "@type": "ml:Field",
-                    "name": "target",
+                    "name": "feature_5-target",
                     "description": "target - the default target field.",
                     "dataType": [
                         "sc:Float",
