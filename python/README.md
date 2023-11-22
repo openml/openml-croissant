@@ -44,7 +44,8 @@ PYTHONPATH=/path/to/project/openml-croissant/python ./openml_croissant/scripts/w
 ```bash
 PYTHONPATH=/path/to/project/openml-croissant/python \
   ./openml_croissant/scripts/generate_croissants.py \
-  -o /home/josvdvelde/projects/openml-croissant/output -c
+  --output-directory /your/output/path \
+  --clean
 ```
 
 ## Run tests and other tools

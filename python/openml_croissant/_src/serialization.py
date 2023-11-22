@@ -15,7 +15,7 @@ import dateutil.parser
 
 def deserialize_croissant(dct: dict[str, Any]) -> dict[str, Any]:
     """
-    In-place deserialization of a dictionary into their datatypes.
+    Deserialization of a dictionary into their datatypes.
 
     Args:
         dct: a DCF dictionary containing raw values (e.g. a string instead of a datetime).

@@ -13,5 +13,3 @@ RUN python -m pip install -e "/python-api[dev]"
 WORKDIR /python-api/openml_croissant
 
 EXPOSE 8000
-ENTRYPOINT ["python", "scripts/web_api.py"]
-CMD ["--host", "0.0.0.0", "--port", "8000"]
