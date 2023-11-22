@@ -1,4 +1,8 @@
 #!python3
+"""
+Script to generate (all) croissant files. Can be used as integration test.
+"""
+
 
 import argparse
 import json

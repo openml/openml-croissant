@@ -19,7 +19,7 @@ def fastapi_app(url_prefix: str) -> FastAPI:
         },
     )
 
-    @app.get(url_prefix + "/croissant/{identifier}")
+    @app.get(url_prefix + "/{identifier}")
     def convert(identifier: int, settings: openml_croissant.Settings = Depends()) -> dict:
         try:
             metadata_openml = openml.datasets.get_dataset(

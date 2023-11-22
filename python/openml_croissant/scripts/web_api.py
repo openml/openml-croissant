@@ -1,4 +1,7 @@
 #!python3
+"""
+Script to run the OpenML Croissant Web API
+"""
 
 import argparse
 
