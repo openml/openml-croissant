@@ -9,17 +9,18 @@ from starlette import status
 import openml_croissant
 
 
-def fastapi_app(url_prefix: str) -> FastAPI:
+def fastapi_app() -> FastAPI:
     """Create the FastAPI application, complete with routes."""
+
     app = FastAPI(
-        openapi_url=f"{url_prefix}/openapi.json",
-        docs_url=f"{url_prefix}/docs",
+        openapi_url="/openapi.json",
+        docs_url="/docs",
         swagger_ui_init_oauth={
             "appName": "OpenML Croissant bakery",
         },
     )
 
-    @app.get(url_prefix + "/{identifier}")
+    @app.get("/{identifier}")
     def convert(identifier: int, settings: openml_croissant.Settings = Depends()) -> dict:
         try:
             metadata_openml = openml.datasets.get_dataset(

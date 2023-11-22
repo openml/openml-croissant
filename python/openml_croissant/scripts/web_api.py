@@ -25,8 +25,8 @@ def _parse_args() -> argparse.Namespace:
 
 def main():
     args = _parse_args()
-    app = openml_croissant.fastapi_app(url_prefix=args.url_prefix)
-    uvicorn.run(app, host=args.host, port=args.port, reload=args.reload)
+    app = openml_croissant.fastapi_app()
+    uvicorn.run(app, host=args.host, port=args.port, reload=args.reload, root_path=args.url_prefix)
 
 
 if __name__ == "__main__":
