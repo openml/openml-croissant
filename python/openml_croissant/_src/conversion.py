@@ -70,7 +70,7 @@ def convert(dataset: OpenMLDataset, settings: Settings) -> dict[str, Any]:
         name=_sanitize_name_string(dataset.name),
         description=dataset.description,
         url=f"https://www.openml.org/search?type=data&id={dataset.dataset_id}",
-        citation=dataset.citation if dataset.citation else dataset.paper_url,
+        citation=dataset.citation or dataset.paper_url,
         license=dataset.licence,
         distribution=distributions,
         record_sets=record_sets,
