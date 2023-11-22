@@ -81,7 +81,7 @@ def convert(dataset: OpenMLDataset, settings: Settings) -> dict[str, Any]:
 
 
 def _sanitize_name_string(name: str) -> str:
-    """Replace special characters with underscores, and transform to lower case.
+    """Replace special characters with underscores.
 
     Args:
         name: a name of a json-ld object.
