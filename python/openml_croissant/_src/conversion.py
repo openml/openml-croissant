@@ -28,6 +28,7 @@ def convert(dataset: OpenMLDataset) -> dict[str, Any]:
         a (validated) croissant json
 
     Raises:
+        mlcroissant.ValidationError: error while validating the mlcroissant Metadata
         ValueError: Unknown datatype: [openml_datatype].
         ValueError: Weird datafile format
     """
