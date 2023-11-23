@@ -1,0 +1,49 @@
+repos:
+-   hooks:
+    -   id: pre-commit-update
+    repo: https://gitlab.com/vojko.pribudic/pre-commit-update
+    rev: v0.1.0
+-   hooks:
+    -   id: check-ast
+    -   id: check-toml
+    -   id: check-yaml
+    -   id: check-added-large-files
+    -   id: check-builtin-literals
+    -   id: end-of-file-fixer
+    -   id: trailing-whitespace
+    repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.5.0
+-   hooks:
+    -   args:
+        - -c
+        - python/pyproject.toml
+        id: bandit
+    repo: https://github.com/PyCQA/bandit
+    rev: 1.7.5
+-   hooks:
+    -   additional_dependencies:
+        - fastapi
+        - pytest
+        - types-python-dateutil
+        id: mypy
+    repo: https://github.com/pre-commit/mirrors-mypy
+    rev: v1.7.0
+-   hooks:
+    -   args:
+        - --fix
+        - --exit-non-zero-on-fix
+        id: ruff
+    repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.1.6
+-   hooks:
+    -   id: black
+    repo: https://github.com/psf/black
+    rev: 23.11.0
+-   hooks:
+    -   always_run: true
+        entry: pytest python/openml_croissant/_src/tests
+        id: pytest-check
+        language: system
+        name: pytest-check
+        pass_filenames: false
+    repo: local

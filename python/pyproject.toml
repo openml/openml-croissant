@@ -1,0 +1,57 @@
+[project]
+name = "openml-croissant"
+version = "0.0.1"
+authors = [
+  { name="Jos van der Velde" },
+]
+description = "The Python-based web API for OpenML Croissant."
+readme = "README.md"
+requires-python = ">3.11"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Operating System :: OS Independent",
+]
+dependencies = [
+    "fastapi==0.104.1",
+    "mlcroissant==0.0.3",
+    "langcodes==3.3.0",
+    "language_data==1.1",
+    "openml==0.14.1",
+    "python-dateutil==2.8.2",
+    "uvicorn==0.24.0.post1",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pre-commit",
+    "pytest",
+]
+
+[project.urls]
+"Homepage" = "https://github.com/openml/openml-croissant"
+"Bug Tracker" = "https://github.com/openml/openml-croissant/issues"
+
+[tool.bandit.assert_used]
+skips = ["python/openml_croissant/_src/tests/*"]
+
+[tool.black]
+line-length = 100
+
+[tool.ruff]
+select = ["A", "ARG", "B", "COM", "C4", "E", "EM", "F", "I001", "PT", "PTH", "T20", "RET", "SIM"]
+line-length = 100
+
+[tool.ruff.lint.flake8-bugbear]
+extend-immutable-calls = ["fastapi.Depends"]
+
+
+[tool.mypy]
+strict = true
+plugins = [
+    "pydantic.mypy"
+]
+
+[tool.pytest.ini_options]
+testpaths = [
+    "python/openml_croissant/_src/tests"
+]
