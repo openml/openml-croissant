@@ -141,9 +141,12 @@ def _field(dataset: OpenMLDataset, feature: OpenMLDataFeature, settings) -> mlc.
         and datatype != mlc.DataType.BOOL
     )
 
+    enumeration_omitted = (
+        is_enumeration and len(feature.nominal_values) > settings.max_categories_per_enumeration
+    )
     kwargs = {
         "name": f"feature_{feature.index}-{name}",  # the index assures the name is unique
-        "description": _field_description(dataset, feature),
+        "description": _field_description(dataset, feature, enumeration_omitted),
         "data_types": datatype,
         "is_enumeration": is_enumeration,
         "source": mlc.Source(
@@ -152,18 +155,23 @@ def _field(dataset: OpenMLDataset, feature: OpenMLDataFeature, settings) -> mlc.
             extract=mlc.Extract(column=feature.name),
         ),
     }
-    if is_enumeration and len(feature.nominal_values) <= settings.max_categories_per_enumeration:
+    if is_enumeration and not enumeration_omitted:
         kwargs["references"] = mlc.Source(uid=f"enumeration_{name}/value", node_type="field")
     return mlc.Field(**kwargs)
 
 
-def _field_description(dataset: OpenMLDataset, feature: OpenMLDataFeature) -> str:
+def _field_description(
+    dataset: OpenMLDataset,
+    feature: OpenMLDataFeature,
+    enumeration_omitted: bool,
+) -> str:
     """
     A field description for a feature.
 
     Args:
         dataset: The OpenML dataset metadata
         feature: The OpenML feature metadata
+        enumeration_omitted: if true, this field is an enumeration, but it is not shown.
 
     Returns:
         A string that can be used as a description of the feature.
@@ -178,7 +186,15 @@ def _field_description(dataset: OpenMLDataset, feature: OpenMLDataFeature) -> st
         field_type = "this field should be ignored"
     else:
         field_type = "a field"
-    return f"{feature.name} - {field_type}."
+    postfix = (
+        (
+            " - this field is configured as an enumeration, but the enumeration is omitted "
+            "because there are too many values"
+        )
+        if enumeration_omitted
+        else ""
+    )
+    return f"{feature.name} - {field_type}{postfix}."
 
 
 def _convert_datatype(feature: OpenMLDataFeature) -> mlc.DataType | list[mlc.DataType]:
