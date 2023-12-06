@@ -14,11 +14,12 @@ classifiers = [
 dependencies = [
     "fastapi==0.104.1",
     "minio==7.2.0",
-    "mlcroissant==0.0.3",
+    "mlcroissant==0.0.4",
     "langcodes==3.3.0",
     "language_data==1.1",
     "openml==0.14.1",
     "python-dateutil==2.8.2",
+    "python-dotenv==1.0.0",
     "uvicorn==0.24.0.post1",
 ]
 
