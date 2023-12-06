@@ -62,6 +62,9 @@ def convert(dataset: OpenMLDataset, settings: Settings) -> dict[str, Any]:
 
     data_file_recordset = mlc.RecordSet(
         name="data-file-description",
+        description="Listing the fields of the data."
+        if fields
+        else "The fields are omitted, " "because this dataset has too " "many.",
         fields=fields,
     )
     record_sets = enum_record_sets + [data_file_recordset]

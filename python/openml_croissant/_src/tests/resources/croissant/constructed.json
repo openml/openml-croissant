@@ -140,6 +140,7 @@
         {
             "@type": "ml:RecordSet",
             "name": "data-file-description",
+            "description": "Listing the fields of the data.",
             "field": [
                 {
                     "@type": "ml:Field",
