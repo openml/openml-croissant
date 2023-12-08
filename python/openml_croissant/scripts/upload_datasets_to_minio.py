@@ -40,20 +40,6 @@ def _parse_args() -> argparse.Namespace:
         help="Client url",
         default="openml1.win.tue.nl",
     )
-    parser.add_argument(
-        "-a",
-        "--access_key",
-        type=str,
-        required=True,
-        help="Credentials for the Minio tenant.",
-    )
-    parser.add_argument(
-        "-s",
-        "--secret-key",
-        type=str,
-        required=True,
-        help="Credentials for the Minio tenant.",
-    )
     return parser.parse_args()
 
 

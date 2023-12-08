@@ -10,6 +10,7 @@ not pass validation.
 
 import argparse
 import json
+import logging
 import tempfile
 from pathlib import Path
 
@@ -47,6 +48,7 @@ def _parse_args() -> argparse.Namespace:
 
 
 def main():
+    logging.basicConfig(level=logging.DEBUG)
     args = _parse_args()
     load_dotenv()
     client = minio_client(args.client_url)
@@ -60,7 +62,11 @@ def main():
                 filename = Path(tmp_dir) / "croissant.json"
                 with filename.open("w") as f:
                     json.dump(croissant, f, indent=4)
+                logging.info(f"Checking {identifier}")
                 mlc.Dataset(filename, debug=False)
+                logging.info(f"Checking {identifier} done")
+        except Exception:
+            logging.exception("Exception while reading or validating croissant")
         finally:
             response.close()
             response.release_conn()
