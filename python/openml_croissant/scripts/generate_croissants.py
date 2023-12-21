@@ -6,23 +6,43 @@ Script to generate (all) croissant files. Can be used as integration test.
 
 import argparse
 import json
+import logging
 import shutil
 from pathlib import Path
+from typing import Iterator
 
 import openml
+from minio import Minio, S3Error
 from tqdm import tqdm
 
 import openml_croissant
+from openml_croissant._src.logger import setup_logger
+from openml_croissant.scripts.upload_datasets_to_minio import (
+    DATASET_BUCKET,
+    format_croissant_object_name,
+    minio_client,
+)
 
 
 def _parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Generate croissants.")
-    parser.add_argument(
+    data_id_group = parser.add_mutually_exclusive_group(required=True)
+    data_id_group.add_argument(
         "--id",
         type=int,
         nargs="*",
-        help="Openml dataset identifier for which to generate a Croissant. If "
-        "omitted, a croissant is generated for every identifier.",
+        help="Openml dataset identifier for which to generate a Croissant.",
+    )
+    data_id_group.add_argument(
+        "--all",
+        action="store_true",
+        help="Create a Croissant for every identifier.",
+    )
+    data_id_group.add_argument(
+        "--latest",
+        action="store_true",
+        help="If set, determine the last dataset which already has a Croissant file "
+        "associated with it, and resume from there.",
     )
     parser.add_argument(
         "-o",
@@ -60,13 +80,46 @@ def _all_dataset_identifiers() -> list[int]:
     return list(df["did"])
 
 
+def _dataset_has_croissant(dataset_id: int, client: Minio) -> bool:
+    croissant_object = format_croissant_object_name(dataset_id)
+    try:
+        client.stat_object(DATASET_BUCKET, croissant_object)
+    except S3Error as e:
+        if e.code == "NoSuchKey":
+            return False
+        raise
+    return True
+
+
+def _new_identifiers() -> Iterator[int]:
+    client = minio_client("openml1.win.tue.nl")
+
+    df = openml.datasets.list_datasets(
+        offset=5380,  # The number of known datasets at the moment, to speed this up.
+        output_format="dataframe",
+    )
+    for identifier in df["did"].sort_values(ascending=False):
+        if _dataset_has_croissant(identifier, client):
+            return
+        yield identifier
+    msg = "No existing croissant file found. Fix the offset in the script."
+    raise RuntimeError(msg)
+
+
 def main():
     args = _parse_args()
+    setup_logger()
     path_output_dir = Path(args.output_directory)
     if args.clean and path_output_dir.exists():
         shutil.rmtree(path_output_dir)
     path_output_dir.mkdir(parents=True, exist_ok=True)
-    identifiers = args.id if args.id else _all_dataset_identifiers()
+    if args.id:
+        identifiers = args.id
+    elif args.all:
+        identifiers = _all_dataset_identifiers()
+    else:
+        identifiers = sorted(_new_identifiers())
+
     settings = openml_croissant.Settings(
         max_categories_per_enumeration=args.max_categories_per_enumeration,
         max_features=args.max_features,
@@ -77,6 +130,7 @@ def main():
     if not path_exception_file.exists():
         with path_exception_file.open("w") as f:
             f.write("identifier,error_type,error\n")
+    logging.info(f"{len(identifiers)} datasets")
     for identifier in tqdm(identifiers):
         try:
             metadata_openml = openml.datasets.get_dataset(
@@ -86,6 +140,7 @@ def main():
                 download_features_meta_data=True,
             )
             metadata_croissant = openml_croissant.convert(metadata_openml, settings)
+            logging.info(f"Writing to {path_croissants / f'{identifier}.json'}")
             with (path_croissants / f"{identifier}.json").open("w") as f:
                 json.dump(
                     metadata_croissant,
@@ -97,6 +152,7 @@ def main():
             with path_exception_file.open("a") as f:
                 msg = str(e).replace("\n", ";")
                 f.write(f"{identifier},{type(e).__name__},{msg}\n")
+                logging.error(f"{type(e).__name__} exception on {identifier}: {msg}")
 
 
 if __name__ == "__main__":

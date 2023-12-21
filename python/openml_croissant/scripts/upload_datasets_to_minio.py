@@ -9,13 +9,16 @@ Later we'll figure out a permanent solution.
 """
 
 import argparse
-import logging
 import os
 from pathlib import Path
 
 from dotenv import load_dotenv
 from minio import Minio
 from tqdm import tqdm
+
+from openml_croissant._src.logger import setup_logger
+
+DATASET_BUCKET = "datasets"
 
 
 def _parse_args() -> argparse.Namespace:
@@ -43,11 +46,8 @@ def _parse_args() -> argparse.Namespace:
     return parser.parse_args()
 
 
-def format_parquet_object_name() -> str:
-    return "croissant.json"
-
-
 def minio_client(url):
+    load_dotenv()
     return Minio(
         url,
         access_key=os.environ["MINIO_ACCESS_KEY"],
@@ -56,9 +56,13 @@ def minio_client(url):
     )
 
 
+def format_croissant_object_name(dataset_id: int) -> str:
+    return f"{dataset_id // 10000:04d}/{dataset_id:04d}/dataset_{dataset_id}_croissant.json"
+
+
 def main():
     args = _parse_args()
-    load_dotenv()
+    setup_logger()
     path_croissant_dir = Path(args.input_directory) / "croissant"
     client = minio_client(args.client_url)
     if not path_croissant_dir.exists():
@@ -69,14 +73,9 @@ def main():
     else:
         files = list(path_croissant_dir.iterdir())
     for file in tqdm(files):
-        identifier = file.stem
-        bucket_name = f"dataset{identifier}"
-        minio_file_path = format_parquet_object_name()
-        if not client.bucket_exists(bucket_name):
-            # we don't want to create more buckets!
-            logging.warning(f"Bucket {bucket_name} does not exist, ignoring for now.")
-        else:
-            client.fput_object(bucket_name, minio_file_path, file)
+        identifier = int(file.stem)
+        minio_file_path = format_croissant_object_name(identifier)
+        client.fput_object(DATASET_BUCKET, minio_file_path, file)
 
 
 if __name__ == "__main__":

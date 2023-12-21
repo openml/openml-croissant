@@ -18,7 +18,7 @@ import mlcroissant as mlc
 from dotenv import load_dotenv
 
 from openml_croissant.scripts.upload_datasets_to_minio import (
-    format_parquet_object_name,
+    format_croissant_object_name,
     minio_client,
 )
 
@@ -54,7 +54,7 @@ def main():
     client = minio_client(args.client_url)
     for identifier in args.id:
         bucket_name = f"dataset{identifier}"
-        minio_file_name = format_parquet_object_name()
+        minio_file_name = format_croissant_object_name(identifier)
         try:
             response = client.get_object(bucket_name, minio_file_name)
             croissant = response.json()
