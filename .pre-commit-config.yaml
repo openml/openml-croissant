@@ -19,7 +19,7 @@ repos:
         -   python/pyproject.toml
         id: bandit
     repo: https://github.com/PyCQA/bandit
-    rev: 1.7.5
+    rev: 1.7.6
 -   hooks:
     -   additional_dependencies:
         -   fastapi
@@ -34,12 +34,12 @@ repos:
         -   --exit-non-zero-on-fix
         id: ruff
     repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.1.7
+    rev: v0.1.8
 -   hooks:
     -   id: black
         args: [--line-length=100]
     repo: https://github.com/psf/black
-    rev: 23.11.0
+    rev: 23.12.0
 -   hooks:
     -   always_run: true
         entry: pytest python/openml_croissant/_src/tests
