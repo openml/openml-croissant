@@ -10,6 +10,7 @@ Later we'll figure out a permanent solution.
 
 import argparse
 import os
+from distutils.util import strtobool
 from pathlib import Path
 
 from dotenv import load_dotenv
@@ -37,22 +38,16 @@ def _parse_args() -> argparse.Namespace:
         required=True,
         help="A path to the directory where the croissants have been written to.",
     )
-    parser.add_argument(
-        "--client-url",
-        type=str,
-        help="Client url",
-        default="openml1.win.tue.nl",
-    )
     return parser.parse_args()
 
 
-def minio_client(url):
+def minio_client():
     load_dotenv()
     return Minio(
-        url,
+        os.environ.get("MINIO_SERVER", default="openml1.win.tue.nl"),
         access_key=os.environ["MINIO_ACCESS_KEY"],
         secret_key=os.environ["MINIO_SECRET_KEY"],
-        secure=True,
+        secure=bool(strtobool(os.environ.get("MINIO_SECURE", "True"))),
     )
 
 
@@ -64,7 +59,7 @@ def main():
     args = _parse_args()
     setup_logger()
     path_croissant_dir = Path(args.input_directory) / "croissant"
-    client = minio_client(args.client_url)
+    client = minio_client()
     if not path_croissant_dir.exists():
         msg = f"Input directory not found: {path_croissant_dir}"
         raise ValueError(msg)

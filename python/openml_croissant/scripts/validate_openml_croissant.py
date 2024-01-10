@@ -26,12 +26,6 @@ from openml_croissant.scripts.upload_datasets_to_minio import (
 def _parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Generate croissants.")
     parser.add_argument(
-        "--client-url",
-        type=str,
-        help="Client url",
-        default="openml1.win.tue.nl",
-    )
-    parser.add_argument(
         "--id",
         type=int,
         nargs="*",
@@ -51,7 +45,7 @@ def main():
     logging.basicConfig(level=logging.DEBUG)
     args = _parse_args()
     load_dotenv()
-    client = minio_client(args.client_url)
+    client = minio_client()
     for identifier in args.id:
         bucket_name = f"dataset{identifier}"
         minio_file_name = format_croissant_object_name(identifier)

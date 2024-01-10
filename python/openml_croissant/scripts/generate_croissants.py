@@ -7,6 +7,7 @@ Script to generate (all) croissant files. Can be used as integration test.
 import argparse
 import json
 import logging
+import os
 import shutil
 from pathlib import Path
 from typing import Iterator
@@ -92,18 +93,21 @@ def _dataset_has_croissant(dataset_id: int, client: Minio) -> bool:
 
 
 def _new_identifiers() -> Iterator[int]:
-    client = minio_client("openml1.win.tue.nl")
+    client = minio_client()
 
+    offset = int(os.environ.get("OPENML_DATASET_OFFSET", 5380))
     df = openml.datasets.list_datasets(
-        offset=5380,  # The number of known datasets at the moment, to speed this up.
+        # The number of known datasets at the moment, to speed this up.
+        offset=offset,
         output_format="dataframe",
     )
     for identifier in df["did"].sort_values(ascending=False):
         if _dataset_has_croissant(identifier, client):
             return
         yield identifier
-    msg = "No existing croissant file found. Fix the offset in the script."
-    raise RuntimeError(msg)
+    if offset > 0:
+        msg = "No existing croissant file found. Fix the offset in the script."
+        raise RuntimeError(msg)
 
 
 def main():
@@ -113,6 +117,10 @@ def main():
     if args.clean and path_output_dir.exists():
         shutil.rmtree(path_output_dir)
     path_output_dir.mkdir(parents=True, exist_ok=True)
+
+    if server := os.environ["OPENML_SERVER"]:
+        openml.config.server = server
+
     if args.id:
         identifiers = args.id
     elif args.all:
