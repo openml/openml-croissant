@@ -3,9 +3,8 @@
 Temporary script, to upload all data to MinIO. Not part of the main python package, because it
 will be deleted (or edited?) later.
 
-This is a temporary solution: for now we'll just upload the data to MinIO,
-and React will request the data to embed it. Newer datasets won't have a croissant.
-Later we'll figure out a permanent solution.
+This is a temporary solution: for now we'll just upload the data to MinIO, and React will request
+the data to embed it. We're running a cronjob to periodically convert new datasets.
 """
 
 import argparse

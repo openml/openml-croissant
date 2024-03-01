@@ -14,7 +14,7 @@ classifiers = [
 dependencies = [
     "fastapi==0.110.0",
     "minio==7.2.4",
-    "mlcroissant==0.0.4",
+    "mlcroissant==1.0.2",
     "langcodes==3.3.0",
     "language_data==1.1",
     "openml==0.14.2",
@@ -34,7 +34,7 @@ dev = [
 "Bug Tracker" = "https://github.com/openml/openml-croissant/issues"
 
 [tool.bandit.assert_used]
-skips = ["python/openml_croissant/_src/tests/*"]
+skips = ["**/tests/*.py"]
 
 [tool.black]
 line-length = 100

@@ -5,9 +5,7 @@ Typical usage:
     json.dump(croissant_dict, f, default=serialize_croissant)
 """
 
-
 import datetime
-from collections import OrderedDict
 from typing import Any
 
 import dateutil.parser
@@ -23,7 +21,7 @@ def deserialize_croissant(dct: dict[str, Any]) -> dict[str, Any]:
     Returns:
         a dictionary containing the proper datatypes (e.g. datetime instead of string).
     """
-    deserialized = OrderedDict()
+    deserialized = {}
     for field, value in dct.items():
         if field.startswith("date"):
             datetime_ = dateutil.parser.parse(value)

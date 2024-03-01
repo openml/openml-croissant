@@ -1,4 +1,5 @@
 import json
+from typing import Any
 
 import openml
 
@@ -8,7 +9,7 @@ from openml_croissant._src.tests.testutils import paths
 
 def test_minimal_conversion():
     metadata_openml = openml.datasets.OpenMLDataset(
-        dataset_id="1",
+        dataset_id=1,
         name="anneal",
         description="description",
         licence="Public",
@@ -21,9 +22,10 @@ def test_minimal_conversion():
     assert croissant["description"] == "description"
     assert croissant["url"] == "https://www.openml.org/search?type=data&id=1"
     assert croissant["license"] == "Public"
-    assert croissant["citation"] == "https://archive.ics.uci.edu/ml/citation_policy.html"
+    assert croissant["citeAs"] == "https://archive.ics.uci.edu/ml/citation_policy.html"
     (distribution,) = croissant["distribution"]
-    assert distribution["name"] == "data-file"
+    assert distribution["@id"] == "data-file"
+    assert distribution["name"] == croissant["name"]
     assert distribution["description"] == "Data file belonging to the dataset."
     assert distribution["contentUrl"] == "https://example.com/dataset.arff"
     assert distribution["encodingFormat"] == "text/plain"
@@ -47,4 +49,19 @@ def test_constructed():
         croissant_expected = json.load(f, object_hook=openml_croissant.deserialize_croissant)
 
     # print(json.dumps(croissant_actual, indent=4, default=openml_croissant.serialize_croissant))
-    assert croissant_actual == croissant_expected
+    assert _ordered_dicts_to_dict(croissant_actual) == croissant_expected
+
+
+def _ordered_dicts_to_dict(dct: dict[str, Any]):
+    """Returning a dictionary where every ordereddict is changed to a dict."""
+    result = {}
+    for field, value in dct.items():
+        if isinstance(value, list):
+            result[field] = [
+                _ordered_dicts_to_dict(item) if isinstance(item, dict) else item for item in value
+            ]
+        elif isinstance(value, dict):
+            result[field] = _ordered_dicts_to_dict(value)
+        else:
+            result[field] = value
+    return result

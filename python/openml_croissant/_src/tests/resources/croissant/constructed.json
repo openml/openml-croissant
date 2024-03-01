@@ -2,38 +2,50 @@
     "@context": {
         "@language": "en",
         "@vocab": "https://schema.org/",
-        "column": "ml:column",
+        "citeAs": "cr:citeAs",
+        "column": "cr:column",
+        "conformsTo": "dct:conformsTo",
+        "cr": "http://mlcommons.org/croissant/",
         "data": {
-            "@id": "ml:data",
+            "@id": "cr:data",
             "@type": "@json"
         },
+        "dataBiases": "cr:dataBiases",
+        "dataCollection": "cr:dataCollection",
         "dataType": {
-            "@id": "ml:dataType",
+            "@id": "cr:dataType",
             "@type": "@vocab"
         },
-        "extract": "ml:extract",
-        "field": "ml:field",
-        "fileProperty": "ml:fileProperty",
-        "format": "ml:format",
-        "includes": "ml:includes",
-        "isEnumeration": "ml:isEnumeration",
-        "jsonPath": "ml:jsonPath",
-        "ml": "http://mlcommons.org/schema/",
-        "parentField": "ml:parentField",
-        "path": "ml:path",
-        "recordSet": "ml:recordSet",
-        "references": "ml:references",
-        "regex": "ml:regex",
-        "repeated": "ml:repeated",
-        "replace": "ml:replace",
+        "dct": "http://purl.org/dc/terms/",
+        "extract": "cr:extract",
+        "field": "cr:field",
+        "fileProperty": "cr:fileProperty",
+        "fileObject": "cr:fileObject",
+        "fileSet": "cr:fileSet",
+        "format": "cr:format",
+        "includes": "cr:includes",
+        "isEnumeration": "cr:isEnumeration",
+        "isLiveDataset": "cr:isLiveDataset",
+        "jsonPath": "cr:jsonPath",
+        "key": "cr:key",
+        "md5": "cr:md5",
+        "parentField": "cr:parentField",
+        "path": "cr:path",
+        "personalSensitiveInformation": "cr:personalSensitiveInformation",
+        "recordSet": "cr:recordSet",
+        "references": "cr:references",
+        "regex": "cr:regex",
+        "repeated": "cr:repeated",
+        "replace": "cr:replace",
         "sc": "https://schema.org/",
-        "separator": "ml:separator",
-        "source": "ml:source",
-        "subField": "ml:subField",
-        "transform": "ml:transform"
+        "separator": "cr:separator",
+        "source": "cr:source",
+        "subField": "cr:subField",
+        "transform": "cr:transform"
     },
     "@type": "sc:Dataset",
-    "citation": "Institute of Ontology",
+    "citeAs": "Institute of Ontology",
+    "conformsTo": "http://mlcommons.org/croissant/1.0",
     "contributor": {
         "@type": "sc:Person",
         "name": "Another Test Person"
@@ -71,8 +83,9 @@
     "version": 7,
     "distribution": [
         {
-            "@type": "sc:FileObject",
-            "name": "data-file",
+            "@type": "cr:FileObject",
+            "@id": "data-file",
+            "name": "test_name",
             "description": "Data file belonging to the dataset.",
             "contentUrl": "https://example.com/data-file.arff",
             "encodingFormat": "text/plain",
@@ -81,12 +94,14 @@
     ],
     "recordSet": [
         {
-            "@type": "ml:RecordSet",
-            "name": "enumeration_date",
+            "@type": "cr:RecordSet",
+            "@id": "enumerations/date",
+            "name": "date",
             "description": "Possible values for date",
             "field": [
                 {
-                    "@type": "ml:Field",
+                    "@type": "cr:Field",
+                    "@id": "enumerations/date/value",
                     "name": "value",
                     "description": "The value of date.",
                     "dataType": "sc:Text"
@@ -117,12 +132,14 @@
             ]
         },
         {
-            "@type": "ml:RecordSet",
-            "name": "enumeration_lodging",
+            "@type": "cr:RecordSet",
+            "@id": "enumerations/lodging",
+            "name": "lodging",
             "description": "Possible values for lodging",
             "field": [
                 {
-                    "@type": "ml:Field",
+                    "@type": "cr:Field",
+                    "@id": "enumerations/lodging/value",
                     "name": "value",
                     "description": "The value of lodging.",
                     "dataType": "sc:Text"
@@ -138,97 +155,120 @@
             ]
         },
         {
-            "@type": "ml:RecordSet",
+            "@type": "cr:RecordSet",
+            "@id": "file/1",
             "name": "data-file-description",
             "description": "Listing the fields of the data.",
             "field": [
                 {
-                    "@type": "ml:Field",
-                    "name": "feature_0-date",
+                    "@type": "cr:Field",
+                    "@id": "features/0",
+                    "name": "date",
                     "description": "date - a field.",
                     "dataType": "sc:Text",
                     "isEnumeration": true,
                     "references": {
-                        "field": "enumeration_date/value"
+                        "field": {
+                            "@id": "enumerations/date/value"
+                        }
                     },
                     "source": {
-                        "distribution": "data-file",
+                        "distribution": {
+                            "@id": "data-file"
+                        },
                         "extract": {
                             "column": "date"
                         }
                     }
                 },
                 {
-                    "@type": "ml:Field",
-                    "name": "feature_1-lodging",
+                    "@type": "cr:Field",
+                    "@id": "features/1",
+                    "name": "lodging",
                     "description": "lodging - a field.",
                     "dataType": "sc:Text",
                     "isEnumeration": true,
                     "references": {
-                        "field": "enumeration_lodging/value"
+                        "field": {
+                            "@id": "enumerations/lodging/value"
+                        }
                     },
                     "source": {
-                        "distribution": "data-file",
+                        "distribution": {
+                            "@id": "data-file"
+                        },
                         "extract": {
                             "column": "lodging"
                         }
                     }
                 },
                 {
-                    "@type": "ml:Field",
-                    "name": "feature_2-carbon",
+                    "@type": "cr:Field",
+                    "@id": "features/2",
+                    "name": "carbon",
                     "description": "carbon - a field.",
                     "dataType": [
                         "sc:Float",
                         "sc:Integer"
                     ],
                     "source": {
-                        "distribution": "data-file",
+                        "distribution": {
+                            "@id": "data-file"
+                        },
                         "extract": {
                             "column": "carbon"
                         }
                     }
                 },
                 {
-                    "@type": "ml:Field",
-                    "name": "feature_3-ignore_this",
+                    "@type": "cr:Field",
+                    "@id": "features/3",
+                    "name": "ignore_this",
                     "description": "ignore this - a field.",
                     "dataType": [
                         "sc:Float",
                         "sc:Integer"
                     ],
                     "source": {
-                        "distribution": "data-file",
+                        "distribution": {
+                            "@id": "data-file"
+                        },
                         "extract": {
                             "column": "ignore this"
                         }
                     }
                 },
                 {
-                    "@type": "ml:Field",
-                    "name": "feature_4-identifier",
+                    "@type": "cr:Field",
+                    "@id": "features/4",
+                    "name": "identifier",
                     "description": "identifier - the field that uniquely identifies each record, this field should be ignored.",
                     "dataType": [
                         "sc:Float",
                         "sc:Integer"
                     ],
                     "source": {
-                        "distribution": "data-file",
+                        "distribution": {
+                            "@id": "data-file"
+                        },
                         "extract": {
                             "column": "identifier"
                         }
                     }
                 },
                 {
-                    "@type": "ml:Field",
-                    "name": "feature_5-target",
+                    "@type": "cr:Field",
+                    "@id": "features/5",
+                    "name": "target",
                     "description": "target - the default target field.",
                     "dataType": [
                         "sc:Float",
                         "sc:Integer"
                     ],
                     "source": {
-                        "distribution": "data-file",
+                        "distribution": {
+                            "@id": "data-file"
+                        },
                         "extract": {
                             "column": "target"
                         }
