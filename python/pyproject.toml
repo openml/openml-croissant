@@ -12,7 +12,7 @@ classifiers = [
     "Operating System :: OS Independent",
 ]
 dependencies = [
-    "fastapi==0.109.1",
+    "fastapi==0.110.0",
     "minio==7.2.4",
     "mlcroissant==0.0.4",
     "langcodes==3.3.0",
