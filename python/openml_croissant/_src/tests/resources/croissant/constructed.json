@@ -85,7 +85,7 @@
         {
             "@type": "cr:FileObject",
             "@id": "data-file",
-            "name": "test_name",
+            "name": "data-file",
             "description": "Data file belonging to the dataset.",
             "contentUrl": "https://example.com/data-file.arff",
             "encodingFormat": "text/plain",

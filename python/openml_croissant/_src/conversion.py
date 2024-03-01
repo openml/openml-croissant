@@ -46,7 +46,7 @@ def convert(dataset: OpenMLDataset, settings: Settings) -> dict[str, Any]:
     distributions = [
         mlc.FileObject(
             id=DATA_FILE_UID,
-            name=dataset.name,
+            name=DATA_FILE_UID,
             description="Data file belonging to the dataset.",
             content_url=dataset.url,
             encoding_format="text/plain",  # No official arff mimetype exist

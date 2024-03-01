@@ -118,7 +118,7 @@ def main():
         shutil.rmtree(path_output_dir)
     path_output_dir.mkdir(parents=True, exist_ok=True)
 
-    if server := os.environ["OPENML_SERVER"]:
+    if server := os.environ.get("OPENML_SERVER", default=None):
         openml.config.server = server
 
     if args.id:

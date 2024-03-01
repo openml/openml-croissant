@@ -25,7 +25,7 @@ def test_minimal_conversion():
     assert croissant["citeAs"] == "https://archive.ics.uci.edu/ml/citation_policy.html"
     (distribution,) = croissant["distribution"]
     assert distribution["@id"] == "data-file"
-    assert distribution["name"] == croissant["name"]
+    assert distribution["name"] == "data-file"
     assert distribution["description"] == "Data file belonging to the dataset."
     assert distribution["contentUrl"] == "https://example.com/dataset.arff"
     assert distribution["encodingFormat"] == "text/plain"
