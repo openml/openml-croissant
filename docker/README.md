@@ -7,6 +7,28 @@ docker run --rm openml/croissant-converter generate_croissants.py --help
 docker run --rm openml/croissant-converter upload_datasets_to_minio.py --help
 ```
 
+Make sure you have a .env file to give to the uploader:
+```bash
+MINIO_ACCESS_KEY=[KEY]
+MINIO_SECRET_KEY=[SECRET]
+```
+
+Example:
+
+```bash
+docker run --rm \
+  -v ./data:/output \
+  -v ~/.cache/openml:/home/unprivileged-user/.cache/openml \
+  openml/croissant-converter:[VERSION] generate_croissants.py \
+  --all \
+  -o /output
+
+docker run --rm \
+  -v ./data:/input \
+  --env-file .env \
+  openml/croissant-converter:[VERSION] upload_datasets_to_minio.py \
+  -i /input
+```
 
 ## Build and publish
 
