@@ -19,7 +19,7 @@ dependencies = [
     "language_data==1.1",
     "openml==0.14.2",
     "python-dateutil==2.9.0",
-    "python-dotenv==1.0.0",
+    "python-dotenv==1.0.1",
     "uvicorn==0.27.1",
 ]
 
