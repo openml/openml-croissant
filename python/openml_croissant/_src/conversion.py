@@ -45,6 +45,7 @@ def convert(dataset: OpenMLDataset, settings: Settings) -> dict[str, Any]:
 
     distributions = [
         mlc.FileObject(
+            id=DATA_FILE_UID,
             name=DATA_FILE_UID,
             description="Data file belonging to the dataset.",
             content_url=dataset.url,
@@ -62,9 +63,11 @@ def convert(dataset: OpenMLDataset, settings: Settings) -> dict[str, Any]:
 
     data_file_recordset = mlc.RecordSet(
         name="data-file-description",
-        description="Listing the fields of the data."
-        if fields
-        else "The fields are omitted, " "because this dataset has too " "many.",
+        description=(
+            "Listing the fields of the data."
+            if fields
+            else "The fields are omitted, because this dataset has too many."
+        ),
         fields=fields,
     )
     record_sets = enum_record_sets + [data_file_recordset]
@@ -73,7 +76,7 @@ def convert(dataset: OpenMLDataset, settings: Settings) -> dict[str, Any]:
         name=_sanitize_name_string(dataset.name),
         description=dataset.description,
         url=f"https://www.openml.org/search?type=data&id={dataset.dataset_id}",
-        citation=dataset.citation or dataset.paper_url,
+        cite_as=dataset.paper_url or dataset.citation,
         license=dataset.licence,
         distribution=distributions,
         record_sets=record_sets,
@@ -104,11 +107,15 @@ def _enum_recordsets(dataset: OpenMLDataset, settings: Settings) -> Iterator[mlc
             and len(feature.nominal_values) <= settings.max_categories_per_enumeration
         ):
             name = _sanitize_name_string(feature.name)
+            id_ = f"enumerations/{name}"  # prefix to avoid duplicate with dataset name
             yield mlc.RecordSet(
-                name=f"enumeration_{name}",  # prefix to avoid duplicate with dataset name
+                id=id_,
+                name=name,
+                data_types=["sc:Enumeration"],
                 description=f"Possible values for {name}",
                 fields=[
                     mlc.Field(
+                        id=f"{id_}/value",
                         name="value",
                         description=f"The value of {name}.",
                         data_types=[mlc.DataType.TEXT],
@@ -144,19 +151,20 @@ def _field(dataset: OpenMLDataset, feature: OpenMLDataFeature, settings) -> mlc.
     enumeration_omitted = (
         is_enumeration and len(feature.nominal_values) > settings.max_categories_per_enumeration
     )
+
     kwargs = {
-        "name": f"feature_{feature.index}-{name}",  # the index assures the name is unique
+        "id": f"features/{feature.index}-{name}",
+        "name": name,
         "description": _field_description(dataset, feature, enumeration_omitted),
         "data_types": datatype,
         "is_enumeration": is_enumeration,
         "source": mlc.Source(
-            uid=DATA_FILE_UID,
-            node_type="distribution",
+            file_object=DATA_FILE_UID,
             extract=mlc.Extract(column=feature.name),
         ),
     }
     if is_enumeration and not enumeration_omitted:
-        kwargs["references"] = mlc.Source(uid=f"enumeration_{name}/value", node_type="field")
+        kwargs["references"] = mlc.Source(field=f"enumerations/{name}/value")
     return mlc.Field(**kwargs)
 
 

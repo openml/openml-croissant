@@ -1,6 +1,7 @@
 """
 Defines web API endpoints.
 """
+
 import openml
 from fastapi import Depends, FastAPI, HTTPException
 from openml.exceptions import OpenMLServerException

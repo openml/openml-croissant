@@ -12,6 +12,7 @@ import shutil
 from pathlib import Path
 from typing import Iterator
 
+import mlcroissant as mlc
 import openml
 from minio import Minio, S3Error
 from tqdm import tqdm
@@ -118,7 +119,7 @@ def main():
         shutil.rmtree(path_output_dir)
     path_output_dir.mkdir(parents=True, exist_ok=True)
 
-    if server := os.environ["OPENML_SERVER"]:
+    if server := os.environ.get("OPENML_SERVER"):
         openml.config.server = server
 
     if args.id:
@@ -149,13 +150,15 @@ def main():
             )
             metadata_croissant = openml_croissant.convert(metadata_openml, settings)
             logging.info(f"Writing to {path_croissants / f'{identifier}.json'}")
-            with (path_croissants / f"{identifier}.json").open("w") as f:
+            filepath = path_croissants / f"{identifier}.json"
+            with filepath.open("w") as f:
                 json.dump(
                     metadata_croissant,
                     f,
                     indent=4,
                     default=openml_croissant.serialize_croissant,
                 )
+            mlc.Dataset(filepath, debug=False)  # Validate, just to be sure.
         except Exception as e:
             with path_exception_file.open("a") as f:
                 msg = str(e).replace("\n", ";")

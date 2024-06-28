@@ -21,7 +21,7 @@ def test_minimal_conversion():
     assert croissant["description"] == "description"
     assert croissant["url"] == "https://www.openml.org/search?type=data&id=1"
     assert croissant["license"] == "Public"
-    assert croissant["citation"] == "https://archive.ics.uci.edu/ml/citation_policy.html"
+    assert croissant["citeAs"] == "https://archive.ics.uci.edu/ml/citation_policy.html"
     (distribution,) = croissant["distribution"]
     assert distribution["name"] == "data-file"
     assert distribution["description"] == "Data file belonging to the dataset."

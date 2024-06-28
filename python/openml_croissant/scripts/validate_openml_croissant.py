@@ -49,6 +49,7 @@ def main():
     for identifier in args.id:
         bucket_name = f"dataset{identifier}"
         minio_file_name = format_croissant_object_name(identifier)
+        response = None
         try:
             response = client.get_object(bucket_name, minio_file_name)
             croissant = response.json()
@@ -62,8 +63,9 @@ def main():
         except Exception:
             logging.exception("Exception while reading or validating croissant")
         finally:
-            response.close()
-            response.release_conn()
+            if response is not None:
+                response.close()
+                response.release_conn()
 
 
 if __name__ == "__main__":

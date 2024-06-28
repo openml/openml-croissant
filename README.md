@@ -2,9 +2,7 @@
 Converting dataset metadata from OpenML to [Croissant](https://github.com/mlcommons/croissant) format
 
 ## Docker
-Use `docker_build.sh` and `docker_run.sh` to set up the Web API.
-Then go to http://localhost:8000/docs#/.
-
+See [Docker README](docker/README.md).
 
 
 ## To discuss
