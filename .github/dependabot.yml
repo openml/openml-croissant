@@ -7,5 +7,5 @@ updates:
     directory: "/python"
     schedule:
       interval: "weekly"
-    labels: 
+    labels:
       - "pip dependencies"

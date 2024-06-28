@@ -5,7 +5,6 @@ Typical usage:
     json.dump(croissant_dict, f, default=serialize_croissant)
 """
 
-
 import datetime
 from collections import OrderedDict
 from typing import Any
