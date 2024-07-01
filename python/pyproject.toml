@@ -17,7 +17,7 @@ dependencies = [
     "mlcroissant==1.0.5",
     "langcodes==3.3.0",
     "language_data==1.2.0",
-    "numpy<2.0.0",
+    "numpy<3.0.0",
     "openml==0.14.2",
     "python-dateutil==2.9.0.post0",
     "python-dotenv==1.0.1",
