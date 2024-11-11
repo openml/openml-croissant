@@ -13,7 +13,7 @@ classifiers = [
 ]
 dependencies = [
     "fastapi==0.115.0",
-    "minio==7.2.7",
+    "minio==7.2.10",
     "mlcroissant==1.0.8",
     "langcodes==3.4.0",
     "language_data==1.2.0",
