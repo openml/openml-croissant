@@ -111,25 +111,25 @@
             ],
             "data": [
                 {
-                    "value": "april"
+                    "enumerations/date/value": "april"
                 },
                 {
-                    "value": "august"
+                    "enumerations/date/value": "august"
                 },
                 {
-                    "value": "july"
+                    "enumerations/date/value": "july"
                 },
                 {
-                    "value": "june"
+                    "enumerations/date/value": "june"
                 },
                 {
-                    "value": "may"
+                    "enumerations/date/value": "may"
                 },
                 {
-                    "value": "october"
+                    "enumerations/date/value": "october"
                 },
                 {
-                    "value": "september"
+                    "enumerations/date/value": "september"
                 }
             ]
         },
@@ -150,10 +150,10 @@
             ],
             "data": [
                 {
-                    "value": "no"
+                    "enumerations/lodging/value": "no"
                 },
                 {
-                    "value": "yes"
+                    "enumerations/lodging/value": "yes"
                 }
             ]
         },
