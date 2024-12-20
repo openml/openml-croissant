@@ -121,7 +121,7 @@ def _enum_recordsets(dataset: OpenMLDataset, settings: Settings) -> Iterator[mlc
                         data_types=[mlc.DataType.TEXT],
                     ),
                 ],
-                data=[{"value": value} for value in feature.nominal_values],
+                data=[{f"{id_}/value": value} for value in feature.nominal_values],
             )
 
 

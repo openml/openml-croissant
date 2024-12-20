@@ -2,7 +2,7 @@ repos:
 -   hooks:
     -   id: pre-commit-update
     repo: https://gitlab.com/vojko.pribudic.foss/pre-commit-update
-    rev: v0.6.0post1
+    rev: v0.6.1
 -   hooks:
     -   id: check-ast
     -   id: check-toml
@@ -19,7 +19,7 @@ repos:
         -   python/pyproject.toml
         id: bandit
     repo: https://github.com/PyCQA/bandit
-    rev: 1.7.10
+    rev: 1.8.0
 -   hooks:
     -   additional_dependencies:
         -   fastapi
@@ -34,7 +34,7 @@ repos:
         -   --exit-non-zero-on-fix
         id: ruff
     repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.7.2
+    rev: v0.8.4
 -   hooks:
     -   id: black
         args: [--line-length=100]

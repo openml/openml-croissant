@@ -8,7 +8,7 @@ from openml_croissant._src.tests.testutils import paths
 
 def test_minimal_conversion():
     metadata_openml = openml.datasets.OpenMLDataset(
-        dataset_id="1",
+        dataset_id=1,
         name="anneal",
         description="description",
         licence="Public",
