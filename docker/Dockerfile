@@ -10,5 +10,6 @@ RUN useradd --create-home unprivileged-user
 USER unprivileged-user
 
 WORKDIR /app/openml_croissant/scripts
+EXPOSE 8000
 
 ENTRYPOINT ["python3"]
