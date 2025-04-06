@@ -26,7 +26,10 @@ def test_minimal_conversion():
     assert distribution["name"] == "data-file"
     assert distribution["description"] == "Data file belonging to the dataset."
     assert distribution["contentUrl"] == "https://example.com/dataset.arff"
-    assert distribution["encodingFormat"] == "text/plain"
+    assert distribution["encodingFormat"] == [
+        "text/plain",
+        "https://ml.cms.waikato.ac.nz/weka/arff.html",
+    ]
     assert distribution["md5"] == "checksum"
 
 
