@@ -89,7 +89,7 @@
             "name": "data-file",
             "description": "Data file belonging to the dataset.",
             "contentUrl": "https://example.com/data-file.arff",
-            "encodingFormat": "text/plain",
+            "encodingFormat": ["text/plain", "https://ml.cms.waikato.ac.nz/weka/arff.html"],
             "md5": "c45bb74cf7ac53ab2b9e61d105dbd454"
         }
     ],

@@ -49,7 +49,11 @@ def convert(dataset: OpenMLDataset, settings: Settings) -> dict[str, Any]:
             name=DATA_FILE_UID,
             description="Data file belonging to the dataset.",
             content_url=dataset.url,
-            encoding_format="text/plain",  # No official arff mimetype exist
+            encoding_formats=[
+                "text/plain",
+                "https://ml.cms.waikato.ac.nz/weka/arff.html",
+            ],  # No official arff mimetype exist. Used a URL instead, as per Croissant
+            # specs. See https://github.com/mlcommons/croissant/pull/826#issuecomment-2777860337.
             md5=dataset.md5_checksum,
         ),
     ]
