@@ -18,6 +18,7 @@ from minio import Minio, S3Error
 from tqdm import tqdm
 
 import openml_croissant
+from openml_croissant._src.hashing import ParquetHasher
 from openml_croissant._src.logger import setup_logger
 from openml_croissant.scripts.upload_datasets_to_minio import (
     DATASET_BUCKET,
@@ -93,8 +94,8 @@ def _dataset_has_croissant(dataset_id: int, client: Minio) -> bool:
     return True
 
 
-def _new_identifiers() -> Iterator[int]:
-    client = minio_client()
+def _new_identifiers(minio: Minio) -> Iterator[int]:
+    minio.list_objects()
 
     offset = int(os.environ.get("OPENML_DATASET_OFFSET", 5380))
     df = openml.datasets.list_datasets(
@@ -103,7 +104,7 @@ def _new_identifiers() -> Iterator[int]:
         output_format="dataframe",
     )
     for identifier in df["did"].sort_values(ascending=False):
-        if _dataset_has_croissant(identifier, client):
+        if _dataset_has_croissant(identifier, minio):
             return
         yield identifier
     if offset > 0:
@@ -122,12 +123,13 @@ def main():
     if server := os.environ.get("OPENML_SERVER"):
         openml.config.server = server
 
+    minio = minio_client()
     if args.id:
         identifiers = args.id
     elif args.all:
         identifiers = _all_dataset_identifiers()
     else:
-        identifiers = sorted(_new_identifiers())
+        identifiers = sorted(_new_identifiers(minio))
 
     settings = openml_croissant.Settings(
         max_categories_per_enumeration=args.max_categories_per_enumeration,
@@ -139,6 +141,7 @@ def main():
     if not path_exception_file.exists():
         with path_exception_file.open("w") as f:
             f.write("identifier,error_type,error\n")
+    parquet_hasher = ParquetHasher(minio)
     logging.info(f"{len(identifiers)} datasets")
     for identifier in tqdm(identifiers):
         try:
@@ -148,7 +151,7 @@ def main():
                 download_qualities=False,
                 download_features_meta_data=True,
             )
-            metadata_croissant = openml_croissant.convert(metadata_openml, settings)
+            metadata_croissant = openml_croissant.convert(metadata_openml, settings, parquet_hasher)
             logging.info(f"Writing to {path_croissants / f'{identifier}.json'}")
             filepath = path_croissants / f"{identifier}.json"
             with filepath.open("w") as f:

@@ -1,8 +1,11 @@
 import json
 
 import openml
+import pytest
+from pytest_mock import MockerFixture
 
 import openml_croissant
+from openml_croissant._src.hashing import ParquetHasher
 from openml_croissant._src.tests.testutils import paths
 
 
@@ -16,7 +19,8 @@ def test_minimal_conversion():
         url="https://example.com/dataset.arff",
         md5_checksum="checksum",
     )
-    croissant = openml_croissant.convert(metadata_openml, openml_croissant.Settings())
+    hasher = ParquetHasher(None)
+    croissant = openml_croissant.convert(metadata_openml, openml_croissant.Settings(), hasher)
     assert croissant["name"] == "anneal"
     assert croissant["description"] == "description"
     assert croissant["url"] == "https://www.openml.org/search?type=data&id=1"
@@ -33,19 +37,40 @@ def test_minimal_conversion():
     assert distribution["md5"] == "checksum"
 
 
-def test_constructed():
-    file_path_features = paths.path_test_resources() / "openml" / "features_constructed.xml"
-    file_path_json = paths.path_test_resources() / "openml" / "constructed.json"
+@pytest.mark.parametrize(
+    ("features_xml", "input_json", "croissant_json"),
+    [
+        ("features_constructed.xml", "constructed.json", "constructed.json"),
+        (
+            "features_constructed.xml",
+            "constructed_with_parquet.json",
+            "constructed_with_parquet.json",
+        ),
+    ],
+)
+def test_constructed(
+    mocker: MockerFixture,
+    features_xml: str,
+    input_json: str,
+    croissant_json: str,
+):
+    file_path_features = paths.path_test_resources() / "openml" / features_xml
+    file_path_json = paths.path_test_resources() / "openml" / input_json
     with file_path_json.open("r") as f:
         kwargs = json.load(f)
     metadata_openml = openml.datasets.OpenMLDataset(
         features_file=str(file_path_features),
         **kwargs,
     )
+    hasher = ParquetHasher(None)
+    mocker.patch.object(ParquetHasher, "md5_from_minio_url", return_value="mocked_hash")
+    croissant_actual = openml_croissant.convert(
+        metadata_openml,
+        openml_croissant.Settings(),
+        hasher,
+    )
 
-    croissant_actual = openml_croissant.convert(metadata_openml, openml_croissant.Settings())
-
-    expected_path = paths.path_test_resources() / "croissant" / "constructed.json"
+    expected_path = paths.path_test_resources() / "croissant" / croissant_json
     with expected_path.open("r") as f:
         croissant_expected = json.load(f, object_hook=openml_croissant.deserialize_croissant)
 

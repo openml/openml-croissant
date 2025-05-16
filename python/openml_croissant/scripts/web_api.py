@@ -8,6 +8,7 @@ import argparse
 import uvicorn
 
 import openml_croissant
+from openml_croissant.scripts.upload_datasets_to_minio import minio_client
 
 
 def _parse_args() -> argparse.Namespace:
@@ -25,7 +26,8 @@ def _parse_args() -> argparse.Namespace:
 
 def main():
     args = _parse_args()
-    app = openml_croissant.fastapi_app()
+    minio = minio_client()
+    app = openml_croissant.fastapi_app(minio)
     uvicorn.run(app, host=args.host, port=args.port, reload=args.reload, root_path=args.url_prefix)
 
 
