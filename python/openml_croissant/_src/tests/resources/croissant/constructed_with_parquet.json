@@ -1,0 +1,280 @@
+{
+    "@context": {
+        "@language": "en",
+        "@vocab": "https://schema.org/",
+        "citeAs": "cr:citeAs",
+        "column": "cr:column",
+        "conformsTo": "dct:conformsTo",
+        "cr": "http://mlcommons.org/croissant/",
+        "rai": "http://mlcommons.org/croissant/RAI/",
+        "data": {
+            "@id": "cr:data",
+            "@type": "@json"
+        },
+        "dataType": {
+            "@id": "cr:dataType",
+            "@type": "@vocab"
+        },
+        "dct": "http://purl.org/dc/terms/",
+        "examples": {
+            "@id": "cr:examples",
+            "@type": "@json"
+        },
+        "extract": "cr:extract",
+        "field": "cr:field",
+        "fileProperty": "cr:fileProperty",
+        "fileObject": "cr:fileObject",
+        "fileSet": "cr:fileSet",
+        "format": "cr:format",
+        "includes": "cr:includes",
+        "isLiveDataset": "cr:isLiveDataset",
+        "jsonPath": "cr:jsonPath",
+        "key": "cr:key",
+        "md5": "cr:md5",
+        "parentField": "cr:parentField",
+        "path": "cr:path",
+        "recordSet": "cr:recordSet",
+        "references": "cr:references",
+        "regex": "cr:regex",
+        "repeated": "cr:repeated",
+        "replace": "cr:replace",
+        "sc": "https://schema.org/",
+        "separator": "cr:separator",
+        "source": "cr:source",
+        "subField": "cr:subField",
+        "transform": "cr:transform"
+    },
+    "@type": "sc:Dataset",
+    "citeAs": "https://example.com/paper-url",
+    "conformsTo": "http://mlcommons.org/croissant/1.0",
+    "contributor": {
+        "@type": "sc:Person",
+        "name": "Another Test Person"
+    },
+    "creator": [
+        {
+            "@type": "sc:Person",
+            "name": "Test Person"
+        },
+        {
+            "@type": "sc:Person",
+            "name": "Another Person"
+        },
+        {
+            "@type": "sc:Person",
+            "name": "And A Third"
+        }
+    ],
+    "dateCreated": "2021-01-01T00:01:02",
+    "datePublished": "2020-01-01T00:01:02",
+    "description": "Test Description",
+    "inLanguage": "en",
+    "isAccessibleForFree": true,
+    "keywords": [
+        "study_1",
+        "study_41",
+        "study_7",
+        "study_88",
+        "uci"
+    ],
+    "license": "Public",
+    "name": "test_name",
+    "sameAs": "https://example.com/original-url",
+    "url": "https://www.openml.org/search?type=data&id=42",
+    "version": 7,
+    "distribution": [
+        {
+            "@type": "cr:FileObject",
+            "@id": "data-file",
+            "name": "data-file",
+            "description": "Data file belonging to the dataset.",
+            "contentUrl": "https://example.com/data-file.pq",
+            "encodingFormat": "application/x-parquet",
+            "md5": "mocked_hash"
+        }
+    ],
+    "recordSet": [
+        {
+            "@type": "cr:RecordSet",
+            "@id": "enumerations/date",
+            "name": "date",
+            "description": "Possible values for date",
+            "dataType": "sc:Enumeration",
+            "field": [
+                {
+                    "@type": "cr:Field",
+                    "@id": "enumerations/date/value",
+                    "name": "value",
+                    "description": "The value of date.",
+                    "dataType": "sc:Text"
+                }
+            ],
+            "data": [
+                {
+                    "enumerations/date/value": "april"
+                },
+                {
+                    "enumerations/date/value": "august"
+                },
+                {
+                    "enumerations/date/value": "july"
+                },
+                {
+                    "enumerations/date/value": "june"
+                },
+                {
+                    "enumerations/date/value": "may"
+                },
+                {
+                    "enumerations/date/value": "october"
+                },
+                {
+                    "enumerations/date/value": "september"
+                }
+            ]
+        },
+        {
+            "@type": "cr:RecordSet",
+            "@id": "enumerations/lodging",
+            "name": "lodging",
+            "description": "Possible values for lodging",
+            "dataType": "sc:Enumeration",
+            "field": [
+                {
+                    "@type": "cr:Field",
+                    "@id": "enumerations/lodging/value",
+                    "name": "value",
+                    "description": "The value of lodging.",
+                    "dataType": "sc:Text"
+                }
+            ],
+            "data": [
+                {
+                    "enumerations/lodging/value": "no"
+                },
+                {
+                    "enumerations/lodging/value": "yes"
+                }
+            ]
+        },
+        {
+            "@type": "cr:RecordSet",
+            "name": "data-file-description",
+            "description": "Listing the fields of the data.",
+            "field": [
+                {
+                    "@type": "cr:Field",
+                    "@id": "features/0-date",
+                    "name": "date",
+                    "description": "date - a field.",
+                    "dataType": "sc:Text",
+                    "references": {
+                        "field": {
+                            "@id": "enumerations/date/value"
+                        }
+                    },
+                    "source": {
+                        "fileObject": {
+                            "@id": "data-file"
+                        },
+                        "extract": {
+                            "column": "date"
+                        }
+                    }
+                },
+                {
+                    "@type": "cr:Field",
+                    "@id": "features/1-lodging",
+                    "name": "lodging",
+                    "description": "lodging - a field.",
+                    "dataType": "sc:Text",
+                    "references": {
+                        "field": {
+                            "@id": "enumerations/lodging/value"
+                        }
+                    },
+                    "source": {
+                        "fileObject": {
+                            "@id": "data-file"
+                        },
+                        "extract": {
+                            "column": "lodging"
+                        }
+                    }
+                },
+                {
+                    "@type": "cr:Field",
+                    "@id": "features/2-carbon",
+                    "name": "carbon",
+                    "description": "carbon - a field.",
+                    "dataType": [
+                        "sc:Float",
+                        "sc:Integer"
+                    ],
+                    "source": {
+                        "fileObject": {
+                            "@id": "data-file"
+                        },
+                        "extract": {
+                            "column": "carbon"
+                        }
+                    }
+                },
+                {
+                    "@type": "cr:Field",
+                    "@id": "features/3-ignore_this",
+                    "name": "ignore_this",
+                    "description": "ignore this - a field.",
+                    "dataType": [
+                        "sc:Float",
+                        "sc:Integer"
+                    ],
+                    "source": {
+                        "fileObject": {
+                            "@id": "data-file"
+                        },
+                        "extract": {
+                            "column": "ignore this"
+                        }
+                    }
+                },
+                {
+                    "@type": "cr:Field",
+                    "@id": "features/4-identifier",
+                    "name": "identifier",
+                    "description": "identifier - the field that uniquely identifies each record, this field should be ignored.",
+                    "dataType": [
+                        "sc:Float",
+                        "sc:Integer"
+                    ],
+                    "source": {
+                        "fileObject": {
+                            "@id": "data-file"
+                        },
+                        "extract": {
+                            "column": "identifier"
+                        }
+                    }
+                },
+                {
+                    "@type": "cr:Field",
+                    "@id": "features/5-target",
+                    "name": "target",
+                    "description": "target - the default target field.",
+                    "dataType": [
+                        "sc:Float",
+                        "sc:Integer"
+                    ],
+                    "source": {
+                        "fileObject": {
+                            "@id": "data-file"
+                        },
+                        "extract": {
+                            "column": "target"
+                        }
+                    }
+                }
+            ]
+        }
+    ]
+}

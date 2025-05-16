@@ -4,13 +4,15 @@ Defines web API endpoints.
 
 import openml
 from fastapi import Depends, FastAPI, HTTPException
+from minio import Minio
 from openml.exceptions import OpenMLServerException
 from starlette import status
 
 import openml_croissant
+from openml_croissant._src.hashing import ParquetHasher
 
 
-def fastapi_app() -> FastAPI:
+def fastapi_app(minio_client: Minio) -> FastAPI:
     """Create the FastAPI application, complete with routes."""
 
     app = FastAPI(
@@ -20,6 +22,7 @@ def fastapi_app() -> FastAPI:
             "appName": "OpenML Croissant bakery",
         },
     )
+    parquet_hasher = ParquetHasher(minio_client)
 
     @app.get("/{identifier}")
     def convert(identifier: int, settings: openml_croissant.Settings = Depends()) -> dict:
@@ -43,9 +46,8 @@ def fastapi_app() -> FastAPI:
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
                 detail=f'Unexpected response from OpenML: "{str(e)}"',
             ) from e
-
         try:
-            return openml_croissant.convert(metadata_openml, settings)
+            return openml_croissant.convert(metadata_openml, settings, parquet_hasher)
         except Exception as e:
             raise HTTPException(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,

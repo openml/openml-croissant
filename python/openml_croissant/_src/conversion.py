@@ -17,19 +17,25 @@ import mlcroissant as mlc
 from openml import OpenMLDataFeature, OpenMLDataset
 
 from openml_croissant._src import conversion_outside_mlcroissant
+from openml_croissant._src.hashing import ParquetHasher
 from openml_croissant._src.settings import Settings
 
 BOOLEAN_STRING_VALUES = ({"TRUE", "FALSE"}, {"1", "0"}, {"True", "False"}, {"true", "false"})
 DATA_FILE_UID = "data-file"
 
 
-def convert(dataset: OpenMLDataset, settings: Settings) -> dict[str, Any]:
+def convert(
+    dataset: OpenMLDataset,
+    settings: Settings,
+    parquet_hasher: ParquetHasher,
+) -> (dict)[str, Any]:
     """
     Convert an openml dataset into a DCF (Croissant) representation.
 
     Args:
         dataset: The OpenML dataset metadata
         settings: The conversion configuration
+        parquet_hasher: Used to retrieve MD5 hashes for parquet files.
 
     Returns
         a (validated) croissant json
@@ -39,22 +45,28 @@ def convert(dataset: OpenMLDataset, settings: Settings) -> dict[str, Any]:
         ValueError: Unknown datatype: [openml_datatype].
         ValueError: Weird datafile format
     """
-    if not dataset.url or not dataset.url.endswith("arff"):
-        msg = "Weird datafile format"
-        raise ValueError(msg)
+    if dataset._parquet_url:
+        url = dataset._parquet_url
+        encoding_formats = ["application/x-parquet"]
+        md5 = parquet_hasher.md5_from_minio_url(url)
+    else:
+        if not dataset.url or not dataset.url.endswith("arff"):
+            msg = "Weird datafile format"
+            raise ValueError(msg)
+        url = dataset.url
+        # No official arff mimetype exist. Used a URL instead, as per Croissant specs.
+        # See https://github.com/mlcommons/croissant/pull/826#issuecomment-2777860337.
+        encoding_formats = ["text/plain", "https://ml.cms.waikato.ac.nz/weka/arff.html"]
+        md5 = dataset.md5_checksum
 
     distributions = [
         mlc.FileObject(
             id=DATA_FILE_UID,
             name=DATA_FILE_UID,
             description="Data file belonging to the dataset.",
-            content_url=dataset.url,
-            encoding_formats=[
-                "text/plain",
-                "https://ml.cms.waikato.ac.nz/weka/arff.html",
-            ],  # No official arff mimetype exist. Used a URL instead, as per Croissant
-            # specs. See https://github.com/mlcommons/croissant/pull/826#issuecomment-2777860337.
-            md5=dataset.md5_checksum,
+            content_url=url,
+            encoding_formats=encoding_formats,
+            md5=md5,
         ),
     ]
 

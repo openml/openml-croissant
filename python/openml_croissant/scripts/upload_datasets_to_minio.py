@@ -40,7 +40,7 @@ def _parse_args() -> argparse.Namespace:
     return parser.parse_args()
 
 
-def minio_client():
+def minio_client() -> Minio:
     load_dotenv()
     return Minio(
         os.environ.get("MINIO_SERVER", default="openml1.win.tue.nl"),
