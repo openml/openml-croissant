@@ -1,6 +1,6 @@
 [project]
 name = "openml-croissant"
-version = "1.4.0"
+version = "1.4.1s"
 authors = [
   { name="Jos van der Velde" },
 ]
