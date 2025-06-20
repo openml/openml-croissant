@@ -4,7 +4,9 @@ Script to run the OpenML Croissant Web API
 """
 
 import argparse
+import os
 
+import openml
 import uvicorn
 
 import openml_croissant
@@ -27,6 +29,8 @@ def _parse_args() -> argparse.Namespace:
 def main():
     args = _parse_args()
     minio = minio_client()
+    if server := os.environ.get("OPENML_SERVER"):
+        openml.config.server = server
     app = openml_croissant.fastapi_app(minio)
     uvicorn.run(app, host=args.host, port=args.port, reload=args.reload, root_path=args.url_prefix)
 
