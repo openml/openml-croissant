@@ -47,6 +47,7 @@ def minio_client() -> Minio:
         access_key=os.environ["MINIO_ACCESS_KEY"],
         secret_key=os.environ["MINIO_SECRET_KEY"],
         secure=bool(strtobool(os.environ.get("MINIO_SECURE", "True"))),
+        cert_check=bool(strtobool(os.environ.get("MINIO_CERT_CHECK", "True"))),
     )
 
 
