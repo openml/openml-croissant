@@ -80,7 +80,7 @@
     "license": "Public",
     "name": "test_name",
     "sameAs": "https://example.com/original-url",
-    "url": "https://www.openml.org/search?type=data&id=42",
+    "url": "https://www.openml.org/d/42",
     "version": 7,
     "distribution": [
         {

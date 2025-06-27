@@ -23,7 +23,7 @@ def test_minimal_conversion():
     croissant = openml_croissant.convert(metadata_openml, openml_croissant.Settings(), hasher)
     assert croissant["name"] == "anneal"
     assert croissant["description"] == "description"
-    assert croissant["url"] == "https://www.openml.org/search?type=data&id=1"
+    assert croissant["url"] == "https://www.openml.org/d/1"
     assert croissant["license"] == "Public"
     assert croissant["citeAs"] == "https://archive.ics.uci.edu/ml/citation_policy.html"
     (distribution,) = croissant["distribution"]

@@ -91,7 +91,7 @@ def convert(
     metadata = mlc.Metadata(
         name=_sanitize_name_string(dataset.name),
         description=dataset.description,
-        url=f"https://www.openml.org/search?type=data&id={dataset.dataset_id}",
+        url=f"https://www.openml.org/d/{dataset.dataset_id}",
         cite_as=dataset.paper_url or dataset.citation,
         license=dataset.licence,
         distribution=distributions,
