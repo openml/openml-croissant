@@ -8,9 +8,10 @@ import os
 
 import openml
 import uvicorn
+from dotenv import load_dotenv
+from minio import Minio
 
 import openml_croissant
-from openml_croissant.scripts.upload_datasets_to_minio import minio_client
 
 
 def _parse_args() -> argparse.Namespace:
@@ -26,9 +27,26 @@ def _parse_args() -> argparse.Namespace:
     return parser.parse_args()
 
 
+def _minio_client() -> Minio:
+    load_dotenv()
+    return Minio(
+        os.environ.get("MINIO_SERVER", default="openml1.win.tue.nl"),
+        access_key=os.environ["MINIO_ACCESS_KEY"],
+        secret_key=os.environ["MINIO_SECRET_KEY"],
+        secure=bool(_strtobool(os.environ.get("MINIO_SECURE", "True"))),
+        cert_check=bool(_strtobool(os.environ.get("MINIO_CERT_CHECK", "True"))),
+    )
+
+
+def _strtobool(input_: str) -> bool:
+    return {"yes": True, "y": True, "true": True, "no": False, "n": False, "false": False}[
+        input_.lower()
+    ]
+
+
 def main():
     args = _parse_args()
-    minio = minio_client()
+    minio = _minio_client()
     if server := os.environ.get("OPENML_SERVER"):
         openml.config.server = server
     app = openml_croissant.fastapi_app(minio)
