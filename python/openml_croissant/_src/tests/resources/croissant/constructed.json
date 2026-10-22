@@ -16,6 +16,7 @@
             "@type": "@vocab"
         },
         "dct": "http://purl.org/dc/terms/",
+        "equivalentProperty": "cr:equivalentProperty",
         "examples": {
             "@id": "cr:examples",
             "@type": "@json"
@@ -38,6 +39,7 @@
         "regex": "cr:regex",
         "repeated": "cr:repeated",
         "replace": "cr:replace",
+        "samplingRate": "cr:samplingRate",
         "sc": "https://schema.org/",
         "separator": "cr:separator",
         "source": "cr:source",
@@ -89,7 +91,10 @@
             "name": "data-file",
             "description": "Data file belonging to the dataset.",
             "contentUrl": "https://example.com/data-file.arff",
-            "encodingFormat": ["text/plain", "https://ml.cms.waikato.ac.nz/weka/arff.html"],
+            "encodingFormat": [
+                "text/plain",
+                "https://ml.cms.waikato.ac.nz/weka/arff.html"
+            ],
             "md5": "c45bb74cf7ac53ab2b9e61d105dbd454"
         }
     ],
