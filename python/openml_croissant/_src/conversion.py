@@ -28,7 +28,7 @@ def convert(
     dataset: OpenMLDataset,
     settings: Settings,
     parquet_hasher: ParquetHasher,
-) -> (dict)[str, Any]:
+) -> dict[str, Any]:
     """
     Convert an openml dataset into a DCF (Croissant) representation.
 
@@ -242,7 +242,7 @@ def _convert_datatype(feature: OpenMLDataFeature) -> mlc.DataType | list[mlc.Dat
         "string": mlc.DataType.TEXT,
         "nominal": mlc.DataType.TEXT,
         "date": mlc.DataType.DATE,
-    }.get(feature.data_type, None)
+    }.get(feature.data_type)
     if d_type is None:
         msg = f"Unknown datatype: {feature.data_type}."
         raise ValueError(msg)
