@@ -63,7 +63,7 @@ def test_constructed(
         **kwargs,
     )
     hasher = ParquetHasher(None)
-    mocker.patch.object(ParquetHasher, "md5_from_minio_url", return_value="mocked_hash")
+    mocker.patch.object(ParquetHasher, "md5_from_s3_url", return_value="mocked_hash")
     croissant_actual = openml_croissant.convert(
         metadata_openml,
         openml_croissant.Settings(),
