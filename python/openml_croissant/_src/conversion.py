@@ -45,11 +45,13 @@ def convert(
         ValueError: Unknown datatype: [openml_datatype].
         ValueError: Weird datafile format
     """
+    parquet_file_found = False
     if dataset._parquet_url:
         url = dataset._parquet_url
         encoding_formats = ["application/x-parquet"]
-        md5 = parquet_hasher.md5_from_minio_url(url)
-    else:
+        md5 = parquet_hasher.md5_from_s3_url(url)
+        parquet_file_found = md5 is not None
+    if not parquet_file_found:
         if not dataset.url or not dataset.url.endswith("arff"):
             msg = "Weird datafile format"
             raise ValueError(msg)
