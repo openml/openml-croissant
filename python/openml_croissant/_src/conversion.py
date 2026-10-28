@@ -46,6 +46,7 @@ def convert(
         ValueError: Weird datafile format
     """
     parquet_file_found = False
+    
     if dataset._parquet_url:
         url = dataset._parquet_url
         encoding_formats = ["application/x-parquet"]
