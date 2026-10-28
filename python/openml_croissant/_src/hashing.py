@@ -1,3 +1,5 @@
+import logging
+import re
 import typing
 
 from botocore.exceptions import ClientError
@@ -8,6 +10,7 @@ if typing.TYPE_CHECKING:
 
 DATASET_BUCKET = "datasets"
 A_WEEK_IN_SECONDS = 7 * 24 * 60 * 60
+ETAG_REGEX = re.compile(r"^[0-9a-f]{32}$")
 
 
 class ParquetHasher:
@@ -16,6 +19,16 @@ class ParquetHasher:
     def __init__(self, s3_client: S3Client):
         self._s3_client = s3_client
         self._cache: Cache = TTLCache(maxsize=10000, ttl=A_WEEK_IN_SECONDS)
+
+    @staticmethod
+    def _is_etag_md5(etag: str) -> bool:
+        """
+        An ETAG does not have to be a MD5 hash. When multipart-upload was used, it can be a
+        MD5 hash of the part, followed by the idx of the part.
+        """
+        if not etag or not isinstance(etag, str):
+            return False
+        return bool(ETAG_REGEX.match(etag))
 
     @cachedmethod(cache=lambda self: self._cache)
     def md5_from_s3_url(self, parquet_url: str) -> str | None:
@@ -35,7 +48,13 @@ class ParquetHasher:
                 return None
             raise e
         md5_hash = object_metadata.get("ETag")
-        if md5_hash is None:
-            msg = "Could not determine MD5 hash from S3 URL"
-            raise ValueError(msg)
-        return md5_hash.strip('"')
+        md5_hash = md5_hash.strip('"') if isinstance(md5_hash, str) else md5_hash
+        if not ParquetHasher._is_etag_md5(md5_hash):
+            msg = (
+                "Could not determine MD5 hash from S3 URL. This is unexpected behavior, "
+                "because the etag should always be a valid MD5 hash when we are not using "
+                f"multipart-uploads. The ETAG was: {md5_hash}"
+            )
+            logging.error(msg)
+            return None
+        return md5_hash
