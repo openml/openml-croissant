@@ -57,6 +57,7 @@ def convert(
         if not dataset.url or not dataset.url.endswith("arff"):
             msg = "Weird datafile format"
             raise ValueError(msg)
+        
         url = dataset.url
         # No official arff mimetype exist. Used a URL instead, as per Croissant specs.
         # See https://github.com/mlcommons/croissant/pull/826#issuecomment-2777860337.
