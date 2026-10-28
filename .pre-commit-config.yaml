@@ -29,7 +29,7 @@ repos:
         id: ruff
     -   id: ruff-format
     repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.17.2
+    rev: v0.17.3
 -   hooks:
     -   always_run: true
         entry: pytest python/openml_croissant/_src/tests
