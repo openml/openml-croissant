@@ -12,9 +12,9 @@ classifiers = [
     "Operating System :: OS Independent",
 ]
 dependencies = [
+    "boto3==1.43.114",
     "cachetools==7.2.4",
     "fastapi==0.154.0",
-    "minio==7.2.20",
     "mlcroissant==1.1.1",
     "langcodes==3.5.1",
     "language_data==1.4.0",
@@ -26,6 +26,7 @@ dependencies = [
 
 [project.optional-dependencies]
 dev = [
+    "boto3-stubs[s3]==1.43.114",
     "pre-commit",
     "pytest",
     "pytest-mock"

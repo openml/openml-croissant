@@ -8,21 +8,14 @@ Generating Croissant metadata descriptions for OpenML datasets.
 docker run --rm openml/croissant-converter web_api --help
 ```
 
-Make sure you have a .env file to give to the web_api. This is used to retrieve a hash of the
-parquet file.
-
-```bash
-MINIO_ACCESS_KEY=[KEY]
-MINIO_SECRET_KEY=[SECRET]
-```
-
 Example:
 
 ```bash
 docker run --rm \
   -v ~/.cache/openml:/home/unprivileged-user/.cache/openml \
   openml/croissant-converter:[VERSION] web_api.py \
-  --host "0.0.0.0"
+  --host "0.0.0.0" \
+  --s3-server https://test.openml.org/s3
 ```
 
 ## Build and publish

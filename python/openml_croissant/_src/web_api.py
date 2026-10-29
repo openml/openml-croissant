@@ -2,17 +2,21 @@
 Defines web API endpoints.
 """
 
+import typing
+
 import openml
 from fastapi import Depends, FastAPI, HTTPException
-from minio import Minio
 from openml.exceptions import OpenMLServerException
 from starlette import status
 
 import openml_croissant
 from openml_croissant._src.hashing import ParquetHasher
 
+if typing.TYPE_CHECKING:
+    from mypy_boto3_s3.client import S3Client
 
-def fastapi_app(minio_client: Minio) -> FastAPI:
+
+def fastapi_app(s3_client: S3Client) -> FastAPI:
     """Create the FastAPI application, complete with routes."""
 
     app = FastAPI(
@@ -22,7 +26,7 @@ def fastapi_app(minio_client: Minio) -> FastAPI:
             "appName": "OpenML Croissant bakery",
         },
     )
-    parquet_hasher = ParquetHasher(minio_client)
+    parquet_hasher = ParquetHasher(s3_client)
 
     @app.get("/{identifier}")
     def convert(identifier: int, settings: openml_croissant.Settings = Depends()) -> dict:
