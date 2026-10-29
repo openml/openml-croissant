@@ -14,7 +14,7 @@ classifiers = [
 dependencies = [
     "boto3==1.43.114",
     "cachetools==7.2.4",
-    "fastapi==0.154.0",
+    "fastapi==0.162.0",
     "mlcroissant==1.1.1",
     "langcodes==3.5.1",
     "language_data==1.4.0",
