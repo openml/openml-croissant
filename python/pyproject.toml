@@ -12,7 +12,7 @@ classifiers = [
     "Operating System :: OS Independent",
 ]
 dependencies = [
-    "boto3==1.43.114",
+    "boto3==1.43.122",
     "cachetools==7.2.4",
     "fastapi==0.162.0",
     "mlcroissant==1.1.1",
